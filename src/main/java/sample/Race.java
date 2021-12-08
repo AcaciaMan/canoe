@@ -9,6 +9,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Cylinder;
 import javafx.util.Duration;
 
 import java.net.URL;
@@ -20,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class Race implements Initializable {
 
     @FXML public Circle circle;
+    @FXML public Circle[] gates = new Circle[Engine.gates.length];
     @FXML private Group group;
 
     Engine engine;
@@ -42,6 +44,19 @@ public class Race implements Initializable {
         circle.setFill(Color.BLUE);
 
         group.getChildren().add(circle);
+
+
+        for (int i = 0; i < Engine.gates.length; i++) {
+            gates[i] = new Circle();
+            gates[i].setRadius(2);
+            gates[i].setFill(Color.GREEN);
+            gates[i].setLayoutX(((double)Engine.frameLength/2) + Engine.gates[i][0]);
+            gates[i].setLayoutY(Engine.frameLength-Engine.gates[i][1]);
+        }
+        //Setting the properties of the Cylinder
+
+
+        group.getChildren().addAll(gates);
 
         //engine.circle = circle;
         //engine.boatX = (double)Engine.frameLength/2;

@@ -28,6 +28,8 @@ public class Engine implements Runnable{
 
     public static Double pixelDuration = frameDuration * frameTimes;
 
+    public static int[][] gates = {{15,200}, {45,200}, {-15,300}, {-45,300}};
+
     public Speed speed = new Speed();
     public Direction direct = new Direction();
     public boolean isStop = false;
@@ -46,6 +48,8 @@ public class Engine implements Runnable{
     public Circle circle;
     public Camera camera;
     public Move move = new Move();
+
+
 
 
     public void drawCircle(Circle circle) {
