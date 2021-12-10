@@ -31,6 +31,8 @@ public class Engine implements Runnable{
     public static int[][] gates = {{15,200,0, -5}, {45,200,0, -5}, {-15,300,0,-5}, {-45,300,0,-5},
             {45,400,1, 15}, {75,400,1, 15}, {-45,400,1, 15}, {-75,400,1, 15}};
 
+    public static int[][] falls = {{350,20}};
+
     public Speed speed = new Speed();
     public Direction direct = new Direction();
     public boolean isStop = false;
@@ -69,6 +71,9 @@ public class Engine implements Runnable{
         move.vector = speed.getVector();
         move.angle = direct.getAngle();
 
+
+
+
         boatY = boatY - move.getMoveY();
         //circle.setTranslateY(boatY);
 
@@ -89,12 +94,6 @@ public class Engine implements Runnable{
                 new TranslateTransition(new javafx.util.Duration(50.0), circle);
         translateTransition.setByX(-move.getMoveX());
         translateTransition.setByY(-move.getMoveY());
-        translateTransition.setOnFinished(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                run();
-            }
-        });
 
         TranslateTransition translateTransitionC =
                 new TranslateTransition(new javafx.util.Duration(45.0), camera);
@@ -109,6 +108,31 @@ public class Engine implements Runnable{
                     translateTransitionC,
                     rt,
                     translateTransition);
+
+            // if boat fall then translate transition y down by i[][1]
+            if(Engine.falls[0][0] < -boatY && Engine.falls[0][0] >= -boatY+move.getMoveY()  ) {
+                TranslateTransition translateTransitionY =
+                        new TranslateTransition(new javafx.util.Duration(45.0), camera);
+                translateTransitionY.setByY(-Engine.falls[0][1]);
+                parallelTransition.getChildren().add(translateTransitionY);
+            }
+
+            // if boat fall then translate transition y down by i[][1]
+            if(Engine.falls[0][0] > -boatY && Engine.falls[0][0] <= -boatY+move.getMoveY()  ) {
+                TranslateTransition translateTransitionY =
+                        new TranslateTransition(new javafx.util.Duration(45.0), camera);
+                translateTransitionY.setByY(Engine.falls[0][1]);
+                parallelTransition.getChildren().add(translateTransitionY);
+            }
+
+
+            parallelTransition.setOnFinished(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    run();
+                }
+            });
+
             parallelTransition.play();
         }
 
