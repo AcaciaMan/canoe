@@ -37,7 +37,7 @@ public class Race implements Initializable {
                 (double)Engine.frameLength/2
                 );
         circle.setLayoutY( //300
-                Engine.frameLength-(Engine.circleRadius*2)
+                Engine.frameLength //-(Engine.circleRadius*2)
                 );
         circle.setRadius(Engine.circleRadius);
 

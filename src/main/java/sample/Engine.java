@@ -31,7 +31,7 @@ public class Engine implements Runnable{
     public static int[][] gates = {{15,200,0, -5}, {45,200,0, -5}, {-15,300,0,-5}, {-45,300,0,-5},
             {45,400,1, 15}, {75,400,1, 15}, {-45,400,1, 15}, {-75,400,1, 15}};
 
-    public static int[][] falls = {{350,20}};
+    public static double[][] falls = {{350.0,20.0}};
 
     public Speed speed = new Speed();
     public Direction direct = new Direction();
@@ -47,6 +47,7 @@ public class Engine implements Runnable{
 
     public Double boatY = 0.0;
     public Double boatX = 0.0;
+    public Double prevBoatY = 0.0;
 
     public Circle circle;
     public Camera camera;
@@ -72,7 +73,7 @@ public class Engine implements Runnable{
         move.angle = direct.getAngle();
 
 
-
+        prevBoatY = boatY;
 
         boatY = boatY - move.getMoveY();
         //circle.setTranslateY(boatY);
@@ -110,15 +111,14 @@ public class Engine implements Runnable{
                     translateTransition);
 
             // if boat fall then translate transition y down by i[][1]
-            if(Engine.falls[0][0] < -boatY && Engine.falls[0][0] >= -boatY+move.getMoveY()  ) {
-                TranslateTransition translateTransitionY =
+            //  350  < --351   && 350 >= 350
+            if(Double.compare(Engine.falls[0][0],-boatY) >= 0 && Double.compare(Engine.falls[0][0],-prevBoatY) < 0 ) {
+                TranslateTransition translateTransitionYup =
                         new TranslateTransition(new javafx.util.Duration(45.0), camera);
-                translateTransitionY.setByY(-Engine.falls[0][1]);
-                parallelTransition.getChildren().add(translateTransitionY);
-            }
-
-            // if boat fall then translate transition y down by i[][1]
-            if(Engine.falls[0][0] > -boatY && Engine.falls[0][0] <= -boatY+move.getMoveY()  ) {
+                translateTransitionYup.setByY(-Engine.falls[0][1]);
+                parallelTransition.getChildren().add(translateTransitionYup);
+            }// if boat fall then translate transition y down by i[][1]
+            if(Double.compare(Engine.falls[0][0],-boatY) <= 0 && Double.compare(Engine.falls[0][0], -prevBoatY) > 0 ) {
                 TranslateTransition translateTransitionY =
                         new TranslateTransition(new javafx.util.Duration(45.0), camera);
                 translateTransitionY.setByY(Engine.falls[0][1]);

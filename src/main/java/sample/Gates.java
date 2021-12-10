@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Cylinder;
+import javafx.scene.shape.Sphere;
 import javafx.util.Duration;
 
 import java.net.URL;
@@ -18,6 +19,14 @@ public class Gates implements Initializable {
 
    @FXML private Group group;
    @FXML private Cylinder[] cylinder = new Cylinder[Engine.gates.length];
+   @FXML private Sphere[] spheres = new Sphere[20];
+
+   public int[][] spherePoints = {{-100,0}, {-100,20}, {100,0}, {100,20},
+           {-10,5}, {-15,15}, {-80,10}, {-50,17},
+           {30,20}, {50,15}, {65,0}, {95,11},
+           {0,0}, {0,20}, {0,7}, {0,14},
+           {-65,20}, {-65,0}, {15,20}, {15,0}
+   };
 
     public PerspectiveCamera camera;
 
@@ -46,6 +55,21 @@ public class Gates implements Initializable {
         group.getChildren().addAll(cylinder);
 
 
+        for (int i = 0; i < spheres.length; i++) {
+            spheres[i] = new Sphere();
+            spheres[i].setRadius(1.0f);
+            PhongMaterial material = new PhongMaterial();
+            material.setDiffuseColor(Color.BLUE);
+            spheres[i].setMaterial(material);
+
+            spheres[i].setTranslateX(spherePoints[i][0]);
+            spheres[i].setTranslateY(spherePoints[i][1]);
+            spheres[i].setTranslateZ(Engine.falls[0][0]);
+        }
+        //Setting the properties of the Cylinder
+
+
+        group.getChildren().addAll(spheres);
 
     }
 
