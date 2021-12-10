@@ -49,7 +49,11 @@ public class Race implements Initializable {
         for (int i = 0; i < Engine.gates.length; i++) {
             gates[i] = new Circle();
             gates[i].setRadius(2);
-            gates[i].setFill(Color.GREEN);
+            if(Engine.gates[i][2]==0) {
+                gates[i].setFill(Color.GREEN);
+            } else {
+                gates[i].setFill(Color.RED);
+            }
             gates[i].setLayoutX(((double)Engine.frameLength/2) + Engine.gates[i][0]);
             gates[i].setLayoutY(Engine.frameLength-Engine.gates[i][1]);
         }

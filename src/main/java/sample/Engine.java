@@ -28,7 +28,8 @@ public class Engine implements Runnable{
 
     public static Double pixelDuration = frameDuration * frameTimes;
 
-    public static int[][] gates = {{15,200}, {45,200}, {-15,300}, {-45,300}};
+    public static int[][] gates = {{15,200,0, -5}, {45,200,0, -5}, {-15,300,0,-5}, {-45,300,0,-5},
+            {45,400,1, 15}, {75,400,1, 15}, {-45,400,1, 15}, {-75,400,1, 15}};
 
     public Speed speed = new Speed();
     public Direction direct = new Direction();
