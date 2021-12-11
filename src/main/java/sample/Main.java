@@ -65,6 +65,13 @@ public class Main extends Application {
         Gates controllerGates = loaderGates.getController();
         controllerGates.camera = camera;
         engine.camera = camera;
+
+        RaceView rw = new RaceView();
+
+        rw.circle = controller.circle;
+        rw.gates = controller.gates;
+        engine.rw = rw;
+
         secStage.show();
 
         camera.setRotationAxis(Rotate.Y_AXIS);
@@ -78,6 +85,7 @@ public class Main extends Application {
         rt.play(); */
 
         primaryStage.show();
+        rw.translateViews();
         engine.run();
         root.requestFocus();
     }

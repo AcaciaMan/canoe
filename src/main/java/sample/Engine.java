@@ -52,7 +52,7 @@ public class Engine implements Runnable{
     public Circle circle;
     public Camera camera;
     public Move move = new Move();
-
+    public RaceView rw;
 
 
 
@@ -123,6 +123,10 @@ public class Engine implements Runnable{
                         new TranslateTransition(new javafx.util.Duration(45.0), camera);
                 translateTransitionY.setByY(Engine.falls[0][1]);
                 parallelTransition.getChildren().add(translateTransitionY);
+            }
+
+            if(Double.compare(rw.views[1][1],-boatY) <= 0 && Double.compare(rw.views[1][1], -prevBoatY) > 0 ) {
+                rw.translateViews1(parallelTransition);
             }
 
 

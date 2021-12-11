@@ -70,6 +70,7 @@ public class Race implements Initializable {
 
         //executor.scheduleAtFixedRate(engine, 150, 150, TimeUnit.MILLISECONDS);
         //engine.run();
+        //translateViews();
     }
 
 
