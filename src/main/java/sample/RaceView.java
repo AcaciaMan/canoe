@@ -12,6 +12,8 @@ public class RaceView {
 
     public Circle[] gates;
 
+    public boolean once = false;
+
     public void translateViews() {
 
         circle.setTranslateY(-RaceView.views[0][1]);
@@ -25,17 +27,20 @@ public class RaceView {
 
     public void translateViews1(ParallelTransition pt) {
 
-        TranslateTransition translateTransition =
-                new TranslateTransition(new javafx.util.Duration(50.0), circle);
-        translateTransition.setByY(RaceView.views[1][1]);
 
-        pt.getChildren().add(translateTransition);
-        pt.play();
+        if (!once) {
+            once = true;
+            TranslateTransition translateTransition =
+                    new TranslateTransition(new javafx.util.Duration(1000.0), circle);
+            translateTransition.setByY(RaceView.views[1][1]);
 
-        for (int i = 0; i < Engine.gates.length; i++) {
-            gates[i].setTranslateY(RaceView.views[1][1]-100);
+            pt.getChildren().add(translateTransition);
+            pt.play();
+
+            for (int i = 0; i < Engine.gates.length; i++) {
+                gates[i].setTranslateY(RaceView.views[1][1] - 100);
+            }
         }
-
 
     }
 }
