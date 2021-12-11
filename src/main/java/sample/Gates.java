@@ -8,6 +8,7 @@ import javafx.scene.PerspectiveCamera;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Box;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Sphere;
 import javafx.util.Duration;
@@ -27,6 +28,10 @@ public class Gates implements Initializable {
            {0,0}, {0,20}, {0,7}, {0,14},
            {-65,20}, {-65,0}, {15,20}, {15,0}
    };
+
+   @FXML private Box[] stones = new Box[1];
+
+   public int[][] stonePoints = {{0,750,20}};
 
     public PerspectiveCamera camera;
 
@@ -70,6 +75,22 @@ public class Gates implements Initializable {
 
 
         group.getChildren().addAll(spheres);
+
+
+        for (int i = 0; i < stones.length; i++) {
+            stones[i] = new Box();
+
+
+            stones[i].setHeight(30.0);
+            stones[i].setWidth(60.0);
+            stones[i].setDepth(10.0);
+
+            stones[i].setTranslateX(stonePoints[i][0]);
+            stones[i].setTranslateY(stonePoints[i][2]);
+            stones[i].setTranslateZ(stonePoints[i][1]);
+        }
+
+        group.getChildren().addAll(stones);
 
     }
 
