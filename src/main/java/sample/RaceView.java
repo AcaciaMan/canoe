@@ -6,13 +6,17 @@ import javafx.scene.shape.Circle;
 
 public class RaceView {
 
-    public static int[][] views = {{Engine.frameLength/2,100},{Engine.frameLength/2,300}};
+    public static int[][] views = {{Engine.frameLength/2,100},{Engine.frameLength/2,300},
+            {Engine.frameLength/2,700}
+    };
 
     public Circle circle;
 
     public Circle[] gates;
 
     public boolean once = false;
+
+    public int stage = 1;
 
     public void translateViews() {
 
@@ -43,4 +47,33 @@ public class RaceView {
         }
 
     }
+
+    public void translateViewsStage(ParallelTransition pt, double boatY, double prevBoatY) {
+
+
+        if(stage>=views.length) return;
+
+        if(Double.compare(views[stage][1],-boatY) <= 0 && Double.compare(views[stage][1], -prevBoatY) > 0 ) {
+
+            TranslateTransition translateTransition =
+                    new TranslateTransition(new javafx.util.Duration(1000.0), circle);
+            if(stage==2) {
+                translateTransition.setByY(views[stage][1] - views[stage - 1][1]);
+            } else if(stage==1) {
+                translateTransition.setByY(views[stage][1]);
+            }
+
+            pt.getChildren().add(translateTransition);
+            pt.play();
+
+            for (int i = 0; i < Engine.gates.length; i++) {
+                gates[i].setTranslateY(views[stage][1] - 100);
+            }
+
+            stage++;
+        }
+
+
+    }
+
 }

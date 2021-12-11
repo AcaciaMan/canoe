@@ -128,9 +128,7 @@ public class Engine implements Runnable{
                 parallelTransition.getChildren().add(translateTransitionY);
             }
 
-            if(Double.compare(rw.views[1][1],-boatY) <= 0 && Double.compare(rw.views[1][1], -prevBoatY) > 0 ) {
-                rw.translateViews1(parallelTransition);
-            }
+           rw.translateViewsStage(parallelTransition, boatY, prevBoatY);
 
 
             parallelTransition.setOnFinished(new EventHandler<ActionEvent>() {
