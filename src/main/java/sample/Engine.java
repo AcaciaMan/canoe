@@ -117,17 +117,19 @@ public class Engine implements Runnable{
 
             // if boat fall then translate transition y down by i[][1]
             //  350  < --351   && 350 >= 350
-            if(Double.compare(Engine.falls[0][0],-boatY) >= 0 && Double.compare(Engine.falls[0][0],-prevBoatY) < 0 ) {
-                TranslateTransition translateTransitionYup =
-                        new TranslateTransition(new javafx.util.Duration(45.0), camera);
-                translateTransitionYup.setByY(-Engine.falls[0][1]);
-                parallelTransition.getChildren().add(translateTransitionYup);
-            }// if boat fall then translate transition y down by i[][1]
-            if(Double.compare(Engine.falls[0][0],-boatY) <= 0 && Double.compare(Engine.falls[0][0], -prevBoatY) > 0 ) {
-                TranslateTransition translateTransitionY =
-                        new TranslateTransition(new javafx.util.Duration(45.0), camera);
-                translateTransitionY.setByY(Engine.falls[0][1]);
-                parallelTransition.getChildren().add(translateTransitionY);
+            for (int i = 0; i < Engine.falls.length; i++) {
+                if (Double.compare(Engine.falls[i][0], -boatY) >= 0 && Double.compare(Engine.falls[i][0], -prevBoatY) < 0) {
+                    TranslateTransition translateTransitionYup =
+                            new TranslateTransition(new javafx.util.Duration(45.0), camera);
+                    translateTransitionYup.setByY(-Engine.falls[i][1]);
+                    parallelTransition.getChildren().add(translateTransitionYup);
+                }// if boat fall then translate transition y down by i[][1]
+                if (Double.compare(Engine.falls[i][0], -boatY) <= 0 && Double.compare(Engine.falls[i][0], -prevBoatY) > 0) {
+                    TranslateTransition translateTransitionY =
+                            new TranslateTransition(new javafx.util.Duration(45.0), camera);
+                    translateTransitionY.setByY(Engine.falls[i][1]);
+                    parallelTransition.getChildren().add(translateTransitionY);
+                }
             }
 
            rw.translateViewsStage(parallelTransition, boatY, prevBoatY);

@@ -15,6 +15,7 @@ import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Gates implements Initializable {
 
@@ -75,6 +76,29 @@ public class Gates implements Initializable {
 
 
         group.getChildren().addAll(spheres);
+
+
+        for (int i = 0; i < Engine.falls[1][1]; i++) {
+            spheres[0] = new Sphere();
+            spheres[0].setRadius(1.0f);
+            PhongMaterial material = new PhongMaterial();
+            material.setDiffuseColor(Color.BLUE);
+            spheres[0].setMaterial(material);
+
+            int randomNumX = ThreadLocalRandom.current().nextInt(-100, 100 + 1);
+
+            int randomNumY = ThreadLocalRandom.current().nextInt(20, 80 + 1);
+
+            spheres[0].setTranslateX(randomNumX);
+            spheres[0].setTranslateY(randomNumY);
+            spheres[0].setTranslateZ(Engine.falls[1][0]);
+
+            group.getChildren().add(spheres[0]);
+        }
+        //Setting the properties of the Cylinder
+
+
+
 
 
         for (int i = 0; i < stones.length; i++) {
