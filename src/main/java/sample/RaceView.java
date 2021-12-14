@@ -7,7 +7,7 @@ import javafx.scene.shape.Circle;
 public class RaceView {
 
     public static int[][] views = {{Engine.frameLength/2,100},{Engine.frameLength/2,300},
-            {Engine.frameLength/2,700}
+            {Engine.frameLength/2,700}, {Engine.frameLength/2,1100}
     };
 
     public Circle circle;
@@ -57,7 +57,7 @@ public class RaceView {
 
             TranslateTransition translateTransition =
                     new TranslateTransition(new javafx.util.Duration(1000.0), circle);
-            if(stage==2) {
+            if(stage>=2) {
                 translateTransition.setByY(views[stage][1] - views[stage - 1][1]);
             } else if(stage==1) {
                 translateTransition.setByY(views[stage][1]);
