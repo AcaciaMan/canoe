@@ -10,6 +10,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Cylinder;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.net.URL;
@@ -22,6 +23,7 @@ public class Race implements Initializable {
 
     @FXML public Circle circle;
     @FXML public Circle[] gates = new Circle[Engine.gates.length];
+    @FXML public Text[] gateNums = new Text[Engine.gates.length/2];
     @FXML private Group group;
 
     Engine engine;
@@ -71,6 +73,19 @@ public class Race implements Initializable {
         //executor.scheduleAtFixedRate(engine, 150, 150, TimeUnit.MILLISECONDS);
         //engine.run();
         //translateViews();
+
+
+        for (int i = 0; i < Engine.gates.length/2; i++) {
+
+            gateNums[i] = new Text(
+                    ((double)Engine.frameLength/2) + Engine.gates[i*2][0],
+                    Engine.frameLength-Engine.gates[i*2][1],
+                    "" + (i+1));
+
+        }
+
+        group.getChildren().addAll(gateNums);
+
     }
 
 

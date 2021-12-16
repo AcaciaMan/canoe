@@ -3,6 +3,7 @@ package sample;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 
 public class RaceView {
 
@@ -13,6 +14,8 @@ public class RaceView {
     public Circle circle;
 
     public Circle[] gates;
+
+    public Text[] gateNums;
 
     public boolean once = false;
 
@@ -26,6 +29,9 @@ public class RaceView {
             gates[i].setTranslateY(-RaceView.views[0][1]);
         }
 
+        for (int i = 0; i < Engine.gates.length/2; i++) {
+            gateNums[i].setTranslateY(-RaceView.views[0][1]);
+        }
 
     }
 
@@ -68,6 +74,10 @@ public class RaceView {
 
             for (int i = 0; i < Engine.gates.length; i++) {
                 gates[i].setTranslateY(views[stage][1] - 100);
+            }
+
+            for (int i = 0; i < Engine.gates.length/2; i++) {
+                gateNums[i].setTranslateY(views[stage][1] - 100);
             }
 
             stage++;

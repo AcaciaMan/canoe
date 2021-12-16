@@ -118,7 +118,7 @@ public class Gates implements Initializable {
 
         group.getChildren().addAll(stones);
 
-
+        /*
         List<Vector2D> vector2DList = new ArrayList<>();
         HashMap<Integer, Integer> pointHeight = new HashMap<>();
         for (int i = 0; i < 100; i++) {
@@ -187,7 +187,7 @@ public class Gates implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+                */
     }
 
 

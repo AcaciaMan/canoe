@@ -70,6 +70,7 @@ public class Main extends Application {
 
         rw.circle = controller.circle;
         rw.gates = controller.gates;
+        rw.gateNums = controller.gateNums;
         engine.rw = rw;
 
         secStage.show();
