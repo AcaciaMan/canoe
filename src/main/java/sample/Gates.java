@@ -157,9 +157,9 @@ public class Gates implements Initializable {
                 mesh.getPoints().addAll(array);
 
                 float[] texture = {
-                        0.00f, 0.00f,        // 0
-                        0.00f, 1.00f,        // 1
-                        1.00f, 1.00f};
+                        0.00f, 1.00f,        // 0
+                        1.00f, 0.67f,        // 1
+                        0.50f, 0.50f};
 
                 int[] faces = {
                         0,0, 1,  1,  2,  2};
@@ -176,9 +176,10 @@ public class Gates implements Initializable {
 
                 view.setMaterial(material);
                 view.setDrawMode(DrawMode.FILL);
-                view.setCullFace(CullFace.NONE);
+                view.setCullFace(CullFace.BACK);
 
-                group.getChildren().add(view);
+
+                //group.getChildren().add(view);
 
             }
 
