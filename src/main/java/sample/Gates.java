@@ -1,5 +1,9 @@
 package sample;
 
+import com.sun.javafx.fxml.builder.TriangleMeshBuilder;
+import io.github.jdiemke.triangulation.DelaunayTriangulator;
+import io.github.jdiemke.triangulation.Triangle2D;
+import io.github.jdiemke.triangulation.Vector2D;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -8,13 +12,11 @@ import javafx.scene.PerspectiveCamera;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Box;
-import javafx.scene.shape.Cylinder;
-import javafx.scene.shape.Sphere;
+import javafx.scene.shape.*;
 import javafx.util.Duration;
 
 import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Gates implements Initializable {
@@ -115,6 +117,72 @@ public class Gates implements Initializable {
         }
 
         group.getChildren().addAll(stones);
+
+
+        List<Vector2D> vector2DList = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            int randomNumX = ThreadLocalRandom.current().nextInt(-100, 100 + 1);
+            int randomNumY = ThreadLocalRandom.current().nextInt(0, 350 + 1);
+
+            Vector2D d = new Vector2D(randomNumX, randomNumY);
+            vector2DList.add(d);
+        }
+        try {
+
+            DelaunayTriangulator triangulator = new DelaunayTriangulator(vector2DList);
+            triangulator.triangulate();
+            List<Triangle2D> triangle2DS = triangulator.getTriangles();
+
+
+            for(Triangle2D triangle2D: triangle2DS) {
+                TriangleMesh mesh = new TriangleMesh();
+                List<Float> floats = new ArrayList<>();
+                floats.add((float) triangle2D.a.x);
+                floats.add(20.0f);
+                floats.add((float) triangle2D.a.y);
+                floats.add((float) triangle2D.b.x);
+                floats.add(20.0f);
+                floats.add((float) triangle2D.b.y);
+                floats.add((float) triangle2D.c.x);
+                floats.add(15.0f);
+                floats.add((float) triangle2D.c.y);
+
+                float[] array = new float[floats.size()];
+                for(int i = 0; i < floats.size(); i++) array[i] = floats.get(i);
+
+
+                mesh.getPoints().addAll(array);
+
+                float[] texture = {
+                        0.00f, 0.00f,        // 0
+                        0.00f, 1.00f,        // 1
+                        1.00f, 1.00f};
+
+                int[] faces = {
+                        0,0, 1,  1,  2,  2};
+
+                mesh.getTexCoords().addAll(texture);
+                mesh.getFaces().addAll(faces);
+
+
+
+                MeshView view = new MeshView(mesh);
+
+                PhongMaterial material = new PhongMaterial();
+                material.setDiffuseColor(Color.BLUE);
+
+                view.setMaterial(material);
+                view.setDrawMode(DrawMode.LINE);
+                view.setCullFace(CullFace.NONE);
+
+                group.getChildren().add(view);
+
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
