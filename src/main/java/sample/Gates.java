@@ -120,10 +120,13 @@ public class Gates implements Initializable {
 
 
         List<Vector2D> vector2DList = new ArrayList<>();
+        HashMap<Integer, Integer> pointHeight = new HashMap<>();
         for (int i = 0; i < 100; i++) {
             int randomNumX = ThreadLocalRandom.current().nextInt(-100, 100 + 1);
             int randomNumY = ThreadLocalRandom.current().nextInt(0, 350 + 1);
+            int rndHeight = ThreadLocalRandom.current().nextInt(0, 5 + 1);
 
+            pointHeight.put(randomNumX*1000 + randomNumY, rndHeight);
             Vector2D d = new Vector2D(randomNumX, randomNumY);
             vector2DList.add(d);
         }
@@ -138,13 +141,13 @@ public class Gates implements Initializable {
                 TriangleMesh mesh = new TriangleMesh();
                 List<Float> floats = new ArrayList<>();
                 floats.add((float) triangle2D.a.x);
-                floats.add(20.0f);
+                floats.add(20.0f-pointHeight.get(((int) triangle2D.a.x)*1000+( (int) triangle2D.a.y)));
                 floats.add((float) triangle2D.a.y);
                 floats.add((float) triangle2D.b.x);
-                floats.add(20.0f);
+                floats.add(20.0f-pointHeight.get(((int) triangle2D.b.x)*1000+( (int) triangle2D.b.y)));
                 floats.add((float) triangle2D.b.y);
                 floats.add((float) triangle2D.c.x);
-                floats.add(15.0f);
+                floats.add(20.0f-pointHeight.get(((int) triangle2D.c.x)*1000+( (int) triangle2D.c.y)));
                 floats.add((float) triangle2D.c.y);
 
                 float[] array = new float[floats.size()];
@@ -172,7 +175,7 @@ public class Gates implements Initializable {
                 material.setDiffuseColor(Color.BLUE);
 
                 view.setMaterial(material);
-                view.setDrawMode(DrawMode.LINE);
+                view.setDrawMode(DrawMode.FILL);
                 view.setCullFace(CullFace.NONE);
 
                 group.getChildren().add(view);
