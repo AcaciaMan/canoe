@@ -9,14 +9,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
 
+import java.awt.*;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Gates implements Initializable {
@@ -118,18 +123,29 @@ public class Gates implements Initializable {
 
         group.getChildren().addAll(stones);
 
-        /*
+
         List<Vector2D> vector2DList = new ArrayList<>();
         HashMap<Integer, Integer> pointHeight = new HashMap<>();
+        HashMap<Integer, Integer> pointIndices = new HashMap<>();
+        List<Float> floats = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             int randomNumX = ThreadLocalRandom.current().nextInt(-100, 100 + 1);
             int randomNumY = ThreadLocalRandom.current().nextInt(0, 350 + 1);
             int rndHeight = ThreadLocalRandom.current().nextInt(0, 5 + 1);
 
             pointHeight.put(randomNumX*1000 + randomNumY, rndHeight);
+            pointIndices.put(randomNumX*1000 + randomNumY, i);
+
+            floats.add((float) randomNumX);
+            floats.add(20.0f-rndHeight);
+            floats.add((float) randomNumY);
+
+
             Vector2D d = new Vector2D(randomNumX, randomNumY);
             vector2DList.add(d);
         }
+
+
         try {
 
             DelaunayTriangulator triangulator = new DelaunayTriangulator(vector2DList);
@@ -137,9 +153,9 @@ public class Gates implements Initializable {
             List<Triangle2D> triangle2DS = triangulator.getTriangles();
 
 
-            for(Triangle2D triangle2D: triangle2DS) {
+            //for(Triangle2D triangle2D: triangle2DS) {
                 TriangleMesh mesh = new TriangleMesh();
-                List<Float> floats = new ArrayList<>();
+                /*floats = new ArrayList<>();
                 floats.add((float) triangle2D.a.x);
                 floats.add(20.0f-pointHeight.get(((int) triangle2D.a.x)*1000+( (int) triangle2D.a.y)));
                 floats.add((float) triangle2D.a.y);
@@ -149,7 +165,7 @@ public class Gates implements Initializable {
                 floats.add((float) triangle2D.c.x);
                 floats.add(20.0f-pointHeight.get(((int) triangle2D.c.x)*1000+( (int) triangle2D.c.y)));
                 floats.add((float) triangle2D.c.y);
-
+                */
                 float[] array = new float[floats.size()];
                 for(int i = 0; i < floats.size(); i++) array[i] = floats.get(i);
 
@@ -157,12 +173,38 @@ public class Gates implements Initializable {
                 mesh.getPoints().addAll(array);
 
                 float[] texture = {
-                        0.00f, 1.00f,        // 0
-                        1.00f, 0.67f,        // 1
-                        0.50f, 0.50f};
+                        0.00f, 0.00f,        // 0
+                        1.00f, 0.00f,        // 1
+                        0.00f, 1.00f};      //2
 
-                int[] faces = {
-                        0,0, 1,  1,  2,  2};
+
+            List<Integer> listFaces = new ArrayList<>();
+            for(Triangle2D triangle2D: triangle2DS) {
+                if(ccw(new Point((int)triangle2D.a.x, (int) triangle2D.a.y),
+                        new Point((int)triangle2D.b.x, (int) triangle2D.b.y),
+                new Point((int)triangle2D.c.x, (int) triangle2D.c.y))>0) {
+                    listFaces.add(pointIndices.get(((int) triangle2D.a.x) * 1000 + ((int) triangle2D.a.y)));
+                    listFaces.add(0);
+                    listFaces.add(pointIndices.get(((int) triangle2D.b.x) * 1000 + ((int) triangle2D.b.y)));
+                    listFaces.add(1);
+                    listFaces.add(pointIndices.get(((int) triangle2D.c.x) * 1000 + ((int) triangle2D.c.y)));
+                    listFaces.add(2);
+                } else {
+                    listFaces.add(pointIndices.get(((int) triangle2D.a.x) * 1000 + ((int) triangle2D.a.y)));
+                    listFaces.add(0);
+                    listFaces.add(pointIndices.get(((int) triangle2D.c.x) * 1000 + ((int) triangle2D.c.y)));
+                    listFaces.add(1);
+                    listFaces.add(pointIndices.get(((int) triangle2D.b.x) * 1000 + ((int) triangle2D.b.y)));
+                    listFaces.add(2);
+
+
+                }
+            }
+//                int[] faces = {
+//                        0,0, 1,  1,  2,  2};
+
+            int[] faces = new int[listFaces.size()];
+            for(int i = 0; i < listFaces.size(); i++) faces[i] = listFaces.get(i);
 
                 mesh.getTexCoords().addAll(texture);
                 mesh.getFaces().addAll(faces);
@@ -172,24 +214,38 @@ public class Gates implements Initializable {
                 MeshView view = new MeshView(mesh);
 
                 PhongMaterial material = new PhongMaterial();
-                material.setDiffuseColor(Color.BLUE);
+                material.setDiffuseColor(Color.LIGHTBLUE);
+
+                //material.setDiffuseMap(new Image("white-water.jpg"));
 
                 view.setMaterial(material);
                 view.setDrawMode(DrawMode.FILL);
-                view.setCullFace(CullFace.BACK);
+                view.setCullFace(CullFace.NONE);
 
+            /*Light.Distant light = new Light.Distant();
+            light.setAzimuth(-135.0f);
+
+            Lighting l = new Lighting();
+            l.setLight(light);
+            l.setSurfaceScale(5.0f);
+
+
+                view.setEffect(l);
+*/
 
                 //group.getChildren().add(view);
 
-            }
+            //}
 
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-                */
     }
 
 
+    public static int ccw(Point a, Point b, Point c) {
+        return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
+    }
 
 }

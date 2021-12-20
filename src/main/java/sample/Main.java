@@ -58,9 +58,11 @@ public class Main extends Application {
         PerspectiveCamera camera = new PerspectiveCamera(true);
 
         scene.setCamera(camera);
+
         camera.setFieldOfView(90.0);
         camera.setFarClip(1200.0);
         camera.setNearClip(10.0);
+
 
         Gates controllerGates = loaderGates.getController();
         controllerGates.camera = camera;
