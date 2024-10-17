@@ -21,23 +21,27 @@ export class M_Scene {
     trackWidth: number = 30;
     trackLength: number = 300;
 
+    sDelete = "";
+
     constructor() {
         
     }
 
     createSvg() {
-        let s = `<svg width="${this.width}" height="${this.height}" xmlns="http://www.w3.org/2000/svg">`;
-
+        
+        let s = "";
+        this.sDelete = "";
         // draw a line for the horizon
         const h = this.height*this.horizon/100;
         s += `<line x1="0" y1="${h}" x2="${this.width}" y2="${h}" stroke="black" stroke-width="1"/>`;
+        this.sDelete += `<line x1="0" y1="${h}" x2="${this.width}" y2="${h}" stroke="white" stroke-width="1"/>`;
 
         // draw a line for the river
         s += `<line x1="0" y1="${this.height}" x2="${this.perspective}" y2="${h}" stroke="blue" stroke-width="1"/>`;
+        this.sDelete += `<line x1="0" y1="${this.height}" x2="${this.perspective}" y2="${h}" stroke="white" stroke-width="1"/>`;
+
         s += `<line x1="${this.width}" y1="${this.height}" x2="${this.width-this.perspective}" y2="${h}" stroke="blue" stroke-width="1"/>`;
-
-
-        s += `</svg>`;
+        this.sDelete += `<line x1="${this.width}" y1="${this.height}" x2="${this.width-this.perspective}" y2="${h}" stroke="white" stroke-width="1"/>`;
 
         return s;
     }

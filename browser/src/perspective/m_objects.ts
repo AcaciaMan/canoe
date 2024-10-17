@@ -15,6 +15,7 @@ export class M_Objects {
     aCircles: { x: number, y: number, r: number, curx: number, cury: number }[] = [];
     mMe: M_Me = M_Me.getInstance();
     mScene = M_Scene.getInstance();
+    sDelete = "";
 
     constructor() {
 
@@ -28,26 +29,22 @@ export class M_Objects {
     }
 
     // create svg images for circles
-    createSvg(i: number) {
-        let s = `<svg width="1000" height="600" xmlns="http://www.w3.org/2000/svg">`;
+    createSvg() {
+        let s = "";
+        this.sDelete = "";
 
-        let mCircle = this.aCircles[i];
+
+        for (let i = 0; i < this.aCircles.length; i++) {
+            let mCircle = this.aCircles[i];
             s += `<circle cx="${mCircle.curx}" cy="${mCircle.cury}" r="${mCircle.r}" fill="red"/>`;
+            this.sDelete += `<circle cx="${mCircle.curx}" cy="${mCircle.cury}" r="${mCircle.r}" fill="white" stroke="white" stroke-width="3" />`;
+        }
 
-        s += `</svg>`;
 
         return s;
     }
 
 
-    // save svg images for circles in resources folder
-    saveSvg() {
-
-        for (let i = 0; i < this.aCircles.length; i++) {
-        const fs = require('fs');
-        fs.writeFileSync(`public/resources/circle${i}.svg`, this.createSvg(i));
-    }
-    }
 
     // recalculate x, y positions for circles according my position
     recalculate() {
