@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG to Canvas</title>
+</head>
+<body>
+  <canvas id="myCanvas" width="300" height="300"></canvas>
+  <script>
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function drawSVG(url, x, y) {
+          const img = new Image();
+          img.onload = function() {
+            ctx.drawImage(img, x, y);
+          };
+          img.onerror = function() {
+            console.error('Failed to load image:', url);
+          };
+          img.src = url;
+        }
+    drawSVG('resources/circle1.svg', 0, 0);
+    drawSVG('resources/circle2.svg', 150, 0);
+  </script>
+</body>
+</html>
