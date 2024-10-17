@@ -6,7 +6,9 @@
   <title>SVG to Canvas</title>
 </head>
 <body>
-  <canvas id="myCanvas" width="300" height="300"></canvas>
+    <button id="fetchButton">Fetch Message from Server</button>
+  <div id="message"></div>
+  <canvas id="myCanvas" width="1000" height="600"></canvas>
   <script>
     const canvas = document.getElementById('myCanvas');
     const ctx = canvas.getContext('2d');
@@ -23,6 +25,16 @@
         }
     drawSVG('resources/circle1.svg', 0, 0);
     drawSVG('resources/circle2.svg', 150, 0);
+
+        // Fetch message from server
+    document.getElementById('fetchButton').addEventListener('click', () => {
+      fetch('/api/example')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('message').innerText = data.message;
+        })
+        .catch(error => console.error('Error fetching message:', error));
+    });
   </script>
 </body>
 </html>
