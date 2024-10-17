@@ -48,8 +48,19 @@ export class M_Objects {
 
     // recalculate x, y positions for circles according my position
     recalculate() {
+        // calculate distance between me and circles
+        // scene height is 100m, scene width is 30m, circle y is 30m, me y is 0m, me x means 15m, circle x is 5m, at what pixel should the circle be drawn?
+        // scene height - (scene height * circle y / 100) + me y
+        // 0 + (scene width * circle x / 30) + me x
+
+
+
+
+
+
         for (let i = 0; i < this.aCircles.length; i++) {
-            this.aCircles[i].cury =  this.mScene.height - this.aCircles[i].y + this.mMe.y + this.mMe.pressedy;
+            this.aCircles[i].curx = this.mScene.width * this.aCircles[i].x / 30;
+            this.aCircles[i].cury =  this.mScene.height - (this.mScene.height*this.aCircles[i].y/100) + this.mMe.y + this.mMe.pressedy;
         }
     }
 
