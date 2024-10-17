@@ -12,17 +12,17 @@ export class M_Objects {
         return M_Objects.instance;
     }
 
-    aCircles: { x: number, y: number, r: number, curx: number, cury: number }[] = [];
+    aCircles: { x: number, y: number, r: number, curx: number, cury: number, curr:number }[] = [];
     mMe: M_Me = M_Me.getInstance();
     mScene = M_Scene.getInstance();
     sDelete = "";
 
     constructor() {
 
-        let mCircle1 = { x: 5, y: 30, r: 3, curx: 5, cury: 30 };
+        let mCircle1 = { x: 5, y: 30, r: 1, curx: 5, cury: 30, curr: 1 };
         this.aCircles.push(mCircle1);
 
-        let mCircle2 = { x: 25, y: 60, r: 3, curx: 25, cury: 60 };
+        let mCircle2 = { x: 25, y: 60, r: 1, curx: 25, cury: 60, curr: 1 };
         this.aCircles.push(mCircle2);
 
 
@@ -36,8 +36,8 @@ export class M_Objects {
 
         for (let i = 0; i < this.aCircles.length; i++) {
             let mCircle = this.aCircles[i];
-            s += `<circle cx="${mCircle.curx}" cy="${mCircle.cury}" r="${mCircle.r}" fill="red"/>`;
-            this.sDelete += `<circle cx="${mCircle.curx}" cy="${mCircle.cury}" r="${mCircle.r}" fill="white" stroke="white" stroke-width="3" />`;
+            s += `<circle cx="${mCircle.curx}" cy="${mCircle.cury}" r="${mCircle.curr}" fill="red"/>`;
+            this.sDelete += `<circle cx="${mCircle.curx}" cy="${mCircle.cury}" r="${mCircle.curr}" fill="white" stroke="white" stroke-width="3" />`;
         }
 
 
@@ -53,14 +53,44 @@ export class M_Objects {
         // scene height - (scene height * circle y / 100) + me y
         // 0 + (scene width * circle x / 30) + me x
 
+        // calulate distance between me and circles
+        // if distance is 0, draw 1m radius of circle
+        // scene hight * circle r / 100
+        // if distance is 600px, draw 0.5m radius of circle
+        // scene hight * circle r / 200
+        
+        let distance: number = 0.0;
+        let distance0r: number = 0.0;
+        let distance600r: number = 0.0;
+        let delta: number = 0.0;
 
 
 
 
 
         for (let i = 0; i < this.aCircles.length; i++) {
+
+
+
             this.aCircles[i].curx = this.mScene.width * this.aCircles[i].x / 30;
             this.aCircles[i].cury =  this.mScene.height - (this.mScene.height*this.aCircles[i].y/100) + this.mMe.y + this.mMe.pressedy;
+            distance = Math.sqrt(
+              (this.aCircles[i].curx - (this.mMe.x + this.mScene.width / 2)) *
+                (this.aCircles[i].curx - (this.mMe.x + this.mScene.width / 2)) +
+                (this.aCircles[i].cury - this.mMe.y) *
+                  (this.aCircles[i].cury - this.mMe.y)
+            );
+
+            distance0r = this.mScene.height * this.aCircles[i].r / 100;
+            distance600r = this.mScene.height * this.aCircles[i].r / 200;
+            delta = (distance600r - distance0r)*distance/600;
+
+
+
+            this.aCircles[i].curr = distance0r - delta;
+
+
+
         }
     }
 
