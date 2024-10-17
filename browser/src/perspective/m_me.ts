@@ -17,16 +17,8 @@ export class M_Me {
     constructor() {
     }
 
-    // recreate svg images in resources folder 4 times in a second
-    // move the me object down the screen 300 pixels in 120 seconds
-    move() {
+    pressedx: number = 0;
+    pressedy: number = 0;
 
-    for (let i = 0; i < 120*4; i++) {
-        setInterval(() => {
 
-            this.y = 300*i/(120*4);
-
-        }, 250);
-    }
-}
 }
