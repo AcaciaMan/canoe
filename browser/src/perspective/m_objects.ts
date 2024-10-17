@@ -49,7 +49,7 @@ export class M_Objects {
     // recalculate x, y positions for circles according my position
     recalculate() {
         for (let i = 0; i < this.aCircles.length; i++) {
-            this.aCircles[i].cury =  this.mScene.height - this.aCircles[i].y - this.mMe.y;
+            this.aCircles[i].cury =  this.mScene.height - this.aCircles[i].y + this.mMe.y;
         }
     }
 

@@ -7,9 +7,9 @@ const handleKeyEvent = (req: Request, res: Response) => {
   const { event, key, pressedAt, releasedAt } = req.body;
 
   if (event === "keyup" && key === "t") {
-    // move me object down the screen 300 pixels in 120 seconds
+    // move me object down the screen 300 pixels in 60 seconds
     const mTime = releasedAt - pressedAt;
-    mMe.y += (300 * mTime) / 120000;
+    mMe.y += (300 * mTime) / 60000;
 
 
     }
@@ -17,7 +17,7 @@ const handleKeyEvent = (req: Request, res: Response) => {
   if (event === "keyup" && key === "g") {
     // move me object down the screen 300 pixels in 120 seconds
     const mTime = releasedAt - pressedAt;
-    mMe.y -= (300 * mTime) / 120000;
+    mMe.y -= (300 * mTime) / 60000;
   }
 
 
