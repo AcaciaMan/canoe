@@ -14,6 +14,7 @@
   <script>
     const canvas = document.getElementById('myCanvas');
     const ctx = canvas.getContext('2d');
+    let color = 80;
 
     // Function to draw Mandelbrot set
     function drawMandelbrot() {
@@ -27,7 +28,7 @@
       for (let x = 0; x < width; x++) {
         for (let y = 0; y < height; y++) {
           let m = mandelbrot((x / magnificationFactor) - panX, (y / magnificationFactor) - panY, maxIterations);
-          ctx.fillStyle = `hsl(${m * 360 / maxIterations}, 100%, ${m < maxIterations ? 50 : 0}%)`;
+          ctx.fillStyle = getColor(m, maxIterations);
           ctx.fillRect(x, y, 1, 1);
         }
       }
@@ -50,9 +51,27 @@
       return maxIterations;
     }
 
-    // Draw Mandelbrot set as a splash of water
-    drawMandelbrot();
+    // Function to get color from blue to white using HSL
+    function getColor(iteration, maxIterations) {
+      const ratio = iteration / maxIterations;
+      const hue = color + 80*ratio; // Blue color
+      const saturation = 100 * (1 - ratio); // Decrease saturation from 100% to 0%
+      const lightness = 50 + 50 * ratio; // Increase lightness from 50% to 100%
+      return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    }
 
+    let intervalId = setInterval
+    (function() {
+      color += 1;
+      drawMandelbrot();
+      console.log(color);
+      // break after 100 iterations
+        if (color > 210) {
+            clearInterval(intervalId);
+        }
+    }, 100);
+    // Draw Mandelbrot set as a splash of water
+    //drawMandelbrot();
   </script>
 </body>
 </html>
