@@ -21,12 +21,31 @@
           img.onerror = function() {
             console.error('Failed to load image:', url);
           };
-          img.src = url;
+          img.src = `${url}?t=${new Date().getTime()}`;
         }
-        drawSVG('resources/scene.svg', 0, 0);
-    drawSVG('resources/circle1.svg', 0, 0);
-    drawSVG('resources/circle2.svg', 150, 0);
+    
+    // Draw two SVG images on the canvas
+    function drawSVGs() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the entire canvas initially
+      drawSVG('resources/scene.svg', 0, 0);
+      drawSVG('resources/circle0.svg', 0, 0);
+      drawSVG('resources/circle1.svg', 0, 0); // Adjust the position as needed
+    }
 
+
+    // Draw SVG images on canvas every 250ms
+    for (let i = 0; i < 120*4; i++) {
+      // refresh files every 250ms
+
+
+
+
+
+        setInterval(() => {    
+    
+    drawSVGs();
+        }, 250);
+      }
         // Fetch message from server
     document.getElementById('fetchButton').addEventListener('click', () => {
       fetch('/api/example')

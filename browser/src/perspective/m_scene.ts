@@ -18,6 +18,9 @@ export class M_Scene {
 
     perspective: number = 50;
 
+    trackWidth: number = 30;
+    trackLength: number = 300;
+
     constructor() {
         
     }
