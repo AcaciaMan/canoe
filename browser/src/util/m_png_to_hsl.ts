@@ -12,10 +12,12 @@ export class M_PngToHsl {
       .raw()
       .toBuffer({ resolveWithObject: true });
 
+      console.log("info", info.height*info.width, data.length);
+
     const rgbPoints = [];
     for (let y = 0; y < info.height; y++) {
       for (let x = 0; x < info.width; x++) {
-        const index = (y * info.width + x) * 3;
+        const index = (y * info.width + x) * 4;
         const r = data[index];
         const g = data[index + 1];
         const b = data[index + 2];

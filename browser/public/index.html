@@ -60,6 +60,22 @@
       }
     }
     
+    async function drawRgb() {
+      try {
+        const rgb = await fetchHsl('/api/rgb');
+        console.log(rgb.length, rgb[0]);
+        for (let i = 0; i < rgb.length; i++) {
+          ctx.fillStyle = `rgb(${rgb[i].r}, ${rgb[i].g}, ${rgb[i].b})`;
+          ctx.fillRect(rgb[i].x, rgb[i].y, 1, 1);
+        }
+
+
+      } catch (error) {
+        console.error('Error fetching HSL:', error);
+        clearInterval(intervalId); // Stop the interval if the server is down
+      }
+    }
+
     // Draw two SVG images on the canvas
     async function drawSVGs() {
       try {
@@ -71,7 +87,8 @@
       }
     }
 
-    drawHsl();
+    //drawHsl();
+    drawRgb();
 
     intervalId = setInterval(() => {    
     drawSVGs();
