@@ -36,6 +36,6 @@ export class M_CalcPosition {
   }
 
   calcHeight(distance: number, mH: number): number {
-    return this.distance0r - (this.distance600r - this.distance0r) * distance * mH / 600;
+    return this.distance0r * mH - ((this.distance0r - this.distance600r) * distance * mH/ 600);
   }
 }

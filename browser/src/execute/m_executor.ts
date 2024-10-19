@@ -88,7 +88,7 @@ export class M_Executor_Boat extends M_Executor {
             // calculate distance between me and gates
             for (let i = 0; i < this.mGates5.aSticks.length; i++) {
                 let mGate = this.mGates5.aSticks[i];
-                mGate.d = this.mCalcPosition.calcDistance(mGate.x, mGate.y);
+                mGate.d = this.mCalcPosition.calcDistance(mGate.scenex, mGate.sceney);
             }
 
             // sort gates by distance in descending order
