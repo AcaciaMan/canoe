@@ -30,7 +30,8 @@ export class M_CalcPosition {
     return Math.sqrt(
       (this.mMe.x + this.mScene.width / 2 - x) *
         (this.mMe.x + this.mScene.width / 2 - x) +
-        (this.mMe.y - y) * (this.mMe.y - y)
+        (this.mMe.y + this.mMe.pressedy - y + this.mScene.height) *
+          (this.mMe.y + this.mMe.pressedy - y + this.mScene.height)
     );
   }
 

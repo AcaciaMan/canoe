@@ -1,7 +1,6 @@
 export class M_Gates5 {
   aSticks: { color: string; x: number; y: number, scenex: number, sceney: number, d:number }[] = [];
-  mH: number = 2;
-  mW: number = 0.30;
+
 
   constructor() {
     this.aSticks = [
