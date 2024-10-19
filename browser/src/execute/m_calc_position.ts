@@ -28,10 +28,10 @@ export class M_CalcPosition {
 
   calcDistance(x: number, y: number): number {
     return Math.sqrt(
-      (this.mMe.x + this.mScene.width / 2 - x) *
-        (this.mMe.x + this.mScene.width / 2 - x) +
-        (this.mMe.y + this.mMe.pressedy - y + this.mScene.height) *
-          (this.mMe.y + this.mMe.pressedy - y + this.mScene.height)
+      (this.mScene.width / 2 - x) *
+        (this.mScene.width / 2 - x) +
+        (y - this.mScene.height) *
+          (y - this.mScene.height)
     );
   }
 

@@ -9,6 +9,10 @@ describe("M_CalcPosition", () => {
   let mScene: M_Scene = M_Scene.getInstance();
 
   beforeEach(() => {
+    mMe.x = 0;
+    mMe.y = 0;
+    mMe.pressedy = 0;
+
 
     calcPosition = new M_CalcPosition();
   });
@@ -16,6 +20,10 @@ describe("M_CalcPosition", () => {
   test("calcPosition should calculate the correct position", () => {
     const result = calcPosition.calcPosition(15, 0);
     expect(result).toEqual({ x: 500, y: 600 });
+
+    mMe.y = -100;
+    const result2 = calcPosition.calcPosition(15, 0);
+    expect(result2).toEqual({ x: 500, y: 500 });
   });
 
   test("calcDistance should calculate the correct distance", () => {
@@ -30,6 +38,10 @@ describe("M_CalcPosition", () => {
 
     const result4 = calcPosition.calcDistance(839, 31);
     expect(result4).toBeCloseTo(662, 0);
+
+    mMe.y = -100;
+        const result5 = calcPosition.calcDistance(500, 500);
+        expect(result5).toBeCloseTo(100, 0);
   });
 
   test("calcHeight should calculate the correct height", () => {
