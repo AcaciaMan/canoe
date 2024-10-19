@@ -81,8 +81,8 @@ export class M_Objects {
                   (this.aCircles[i].cury - this.mMe.y)
             );
 
-            distance0r = this.mScene.height * this.aCircles[i].r / 100;
-            distance600r = this.mScene.height * this.aCircles[i].r / 200;
+            distance0r = this.mScene.width * this.aCircles[i].r / 30;
+            distance600r = this.mScene.width * this.aCircles[i].r / 60;
             delta = (distance600r - distance0r)*distance/600;
 
 
