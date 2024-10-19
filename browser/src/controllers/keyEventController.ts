@@ -52,6 +52,6 @@ setInterval(() => {
 
         mMe.pressedy = -(600 * mTime) / 10000;
     }
-    }, 250);
+    }, 1000 / 24);
 
 export default { handleKeyEvent };
