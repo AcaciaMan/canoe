@@ -62,6 +62,16 @@ class RGBApp:
 
         
         df = pd.DataFrame(pixels, columns=["x", "y", "r", "g", "b"])
+
+        # Convert columns to appropriate data types
+        df["x"] = df["x"].astype("int32")
+        df["y"] = df["y"].astype("int32")
+        df["r"] = df["r"].astype("uint8")
+        df["g"] = df["g"].astype("uint8")
+        df["b"] = df["b"].astype("uint8")
+
+
+
         df.to_pickle(os.path.join("c:/work/photo", "pixels.pkl"))
         print("Pixels saved to pixels.pkl successfully.")   
 
