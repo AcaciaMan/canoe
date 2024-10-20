@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "type": "debugpy",
+            "request": "launch",
+            "name": "Launch Canoe Slalom Game",
+            "program": "${workspaceFolder}/src/m_tkinter/rgbApp.py",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+              }
+        }
+    ]
+}
