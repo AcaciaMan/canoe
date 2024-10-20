@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB Pixel Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #imageCanvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>RGB Pixel Viewer</h1>
+    <input type="file" id="imageInput" accept="image/*">
+    <button onclick="processImage()">Process Image</button>
+    <canvas id="imageCanvas"></canvas>
+    <script>
+        function processImage() {
+            const input = document.getElementById('imageInput');
+            if (input.files && input.files[0]) {
+                const formData = new FormData();
+                formData.append('image', input.files[0]);
+
+                fetch('/process_image', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === "Image processed successfully") {
+                        alert(data.message);
+                        // Display the image on the canvas
+                        const canvas = document.getElementById('imageCanvas');
+                        const ctx = canvas.getContext('2d');
+                        const img = new Image();
+                        img.onload = function() {
+                            canvas.width = data.width;
+                            canvas.height = data.height;
+                            ctx.drawImage(img, 0, 0);
+                        };
+                        img.src = URL.createObjectURL(input.files[0]);
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            } else {
+                alert("No file selected");
+            }
+        }
+    </script>
+</body>
+</html>
