@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import filedialog
 
+import pandas as pd
+import os
+
 from m_rgb.m_rgb import M_RGB
 from PIL import Image, ImageTk
 
@@ -37,6 +40,7 @@ class RGBApp:
             pixels, width, height = self.m_rgb.m_rgb(image_path)
             print("Image processed successfully.", len(pixels))
             self.display_pixels(pixels, width, height)
+            self.save_pixels(pixels)
 
     def display_pixels(self, pixels, width, height):
         self.canvas.delete("all")
@@ -52,6 +56,14 @@ class RGBApp:
         # Display the PhotoImage object on the canvas
         self.canvas.create_image(0, 0, anchor=tk.NW, image=photo)
         self.canvas.image = photo  # Keep a reference to avoid garbage collection
+
+    # create a pandas dataframe from the pixels array and save it to a pickle file in c:/work/photo folder
+    def save_pixels(self, pixels):
+
+        
+        df = pd.DataFrame(pixels, columns=["x", "y", "r", "g", "b"])
+        df.to_pickle(os.path.join("c:/work/photo", "pixels.pkl"))
+        print("Pixels saved to pixels.pkl successfully.")   
 
 
 if __name__ == "__main__":
