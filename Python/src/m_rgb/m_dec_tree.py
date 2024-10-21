@@ -5,6 +5,9 @@ class M_DecTree:
         self.sorted_diffs = {}
         self.pixels = {}
         self.rgbs = []
+        self.objects_pixels = {}
+        self.objects = {}
+        self.checked_pixels = {}
 
     def calc_rgb_diffs(self, image):
         self.image = image
@@ -138,10 +141,10 @@ class M_DecTree:
 
     def max_rg_not_b(self, diff):
         # Return True if the maximum difference is in the red or green channel and not in the blue channel
-        if abs(diff[2]) < 50:
+        if abs(diff[2]) < 20:
             return max(diff[0], diff[1])
         else:
-            return 50
+            return 20
 
     def print_out_max_diffs(self):
         # Print out the top 10 maximum differences for red and green channels and not blue
@@ -157,7 +160,7 @@ class M_DecTree:
         rg_not_b_diffs = []
         rg_not_b_pixels = {}
         for diff, _ in self.sorted_diffs:
-            if self.max_rg_not_b(diff) > 50:
+            if self.max_rg_not_b(diff) > 20:
                 rg_not_b_diffs.append(diff)
             else:
                 break
@@ -167,7 +170,70 @@ class M_DecTree:
             for p in pixel:
                 rg_not_b_pixels[p] = self.rgbs[p[0], p[1]]
 
-        print(f"Number of pixels with red or green channel difference > 100 and blue channel difference < 100: {len(rg_not_b_pixels)}")        
+        print(f"Number of pixels with red or green channel difference > 100 and blue channel difference < 100: {len(rg_not_b_pixels)}")  
+
+        self.objects_pixels = rg_not_b_pixels      
 
         return rg_not_b_pixels
+    
+    def get_objects(self):
+        # loop through the pixels and find the objects areas
+        self.objects = {}
+        self.checked_pixels = {}
+        ik=0
+        for p in self.objects_pixels:
+            x, y = p
+            if p in self.checked_pixels:
+                continue
+            self.checked_pixels[(x, y)] = True
+            self.objects[ik] = [(x, y)]
+            stack = [p]
+            while stack:
+                current_pixel = stack.pop()
+                x, y = current_pixel
+                for i in range(1, 5):
+                    if i == 1:
+                        x1, y1 = x-1, y
+                    if i == 2:
+                        x1, y1 = x+1, y
+                    if i == 3:
+                        x1, y1 = x, y-1
+                    if i == 4:
+                        x1, y1 = x, y+1
+                    if (x1, y1) in self.checked_pixels:
+                        continue
+                    self.checked_pixels[(x1, y1)] = True
+                    if (x1, y1) in self.objects_pixels:
+                        self.objects[ik].append((x1, y1))
+                        stack.append((x1, y1))
+            ik += 1
+
+
+    def order_objects_pixels(self):
+        # order the objects pixels in rows by x, y
+        for obj in self.objects:
+            self.objects[obj].sort(key=lambda x: x[0]+x[1]*self.image.width)
+
+    def add_pixels_inside_objects(self):
+        # add the pixels inside the objects
+        for obj in self.objects:
+            # iterate through the pixels in the object
+            # check if in the row x there are pixels between the pixels in the object
+            # if there are, add them to the object
+
+            for i in range(len(self.objects[obj])):
+                x, y = self.objects[obj][i]
+                if i == 0:
+                    continue
+                x1, y1 = self.objects[obj][i-1]
+                #print(f"Checking pixels between {x1}, {y1} and {x}, {y}")
+                if y1 == y:
+                    for j in range(x1+1, x):
+                        self.objects[obj].append((j, y))
+
+
+
+
+
+
     

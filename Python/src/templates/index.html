@@ -52,7 +52,7 @@
                                 // else set the pixel color to white
                                                                 // Convert string key back to tuple
                                                                 const key = `${x},${y}`;
-                                if (key in data.pixels && data.pixels[key][0] > 150) {
+                                if (key in data.pixels) {
                                     imageData.data[i * 4] = data.pixels[key][0];
                                     imageData.data[i * 4 + 1] = data.pixels[key][1];
                                     imageData.data[i * 4 + 2] = data.pixels[key][2];

@@ -76,6 +76,19 @@ def process_image():
         # Convert the dictionary keys to strings
         pixel_dict_str_keys = {f"{x},{y}": (r, g, b) for (x, y), (r, g, b) in rg_not_b_pixels.items()}
 
+        m_rgb.mDecTree.get_objects()
+        m_rgb.mDecTree.order_objects_pixels()
+        m_rgb.mDecTree.add_pixels_inside_objects()
+
+        # make the dictionary of pixels of objects
+        pixel_dict_str_keys = {}
+        for obj in m_rgb.mDecTree.objects:
+            for p in m_rgb.mDecTree.objects[obj]:
+                x, y = p
+                r, g, b = m_rgb.mDecTree.rgbs[x, y]
+                pixel_dict_str_keys[f"{x},{y}"] = (r, g, b)
+                
+
         return jsonify({"message": "Image processed successfully", "width": width, "height": height, "pixels": pixel_dict_str_keys})
     return jsonify({"message": "No file uploaded"}), 400
 
