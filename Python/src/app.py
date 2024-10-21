@@ -4,6 +4,7 @@ import pandas as pd
 import os
 
 from m_rgb.m_dec_tree import M_DecTree
+import routes
 
 app = Flask(__name__)
 
@@ -99,6 +100,9 @@ def process_image():
 
         return jsonify({"message": "Image processed successfully", "width": width, "height": height, "pixels": pixel_dict_str_keys})
     return jsonify({"message": "No file uploaded"}), 400
+
+app.add_url_rule('/stick.html', view_func=routes.stick)
+app.add_url_rule('/stick_image', view_func=routes.stick_image)
 
 if __name__ == "__main__":
     if not os.path.exists('uploads'):

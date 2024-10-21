@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB Pixel Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #imageCanvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>RGB Pixel Viewer</h1>
+    <button onclick="processImage()">Process Image</button>
+    <canvas id="imageCanvas"></canvas>
+    <script>
+        function processImage() {
+                fetch('/stick_image', {
+                    method: 'GET'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === "Image processed successfully") {
+                        alert(data.message);
+                        // Display the image on the canvas
+                        const canvas = document.getElementById('imageCanvas');
+                        const ctx = canvas.getContext('2d');
+                        const img = new Image();
+                            canvas.width = data.width;
+                            canvas.height = data.height;
+                            //ctx.drawImage(img, 0, 0);
+                            const imageData = ctx.createImageData(data.width, data.height);
+                            for (let i = 0; i < data.width * data.height; i++) {
+                                // Set the pixel color from data.pixels
+                                const x = i % data.width;
+                                const y = Math.floor(i / data.width);
+                                // if x, y in data.pixels dictionary with key x, y
+                                // then set the pixel color
+                                // else set the pixel color to white
+                                                                // Convert string key back to tuple
+                                                                const key = `${x},${y}`;
+                                if (key in data.pixels) {
+                                    imageData.data[i * 4] = data.pixels[key][0];
+                                    imageData.data[i * 4 + 1] = data.pixels[key][1];
+                                    imageData.data[i * 4 + 2] = data.pixels[key][2];
+                                    imageData.data[i * 4 + 3] = 255;
+                                } else {
+                                    imageData.data[i * 4] = 255;
+                                    imageData.data[i * 4 + 1] = 255;
+                                    imageData.data[i * 4 + 2] = 255;
+                                    imageData.data[i * 4 + 3] = 255;
+                                }
+
+                            }
+                            ctx.putImageData(imageData, 0, 0);
+                        
+                    } else {
+                        alert(data.message);
+                    }
+                })
+        }
+    </script>
+</body>
+</html>
