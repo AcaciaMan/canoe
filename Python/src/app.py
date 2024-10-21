@@ -3,11 +3,14 @@ from PIL import Image
 import pandas as pd
 import os
 
+from m_rgb.m_dec_tree import M_DecTree
+
 app = Flask(__name__)
 
 class M_RGB:
     def __init__(self):
         self.image_path = ""
+        self.mDecTree = M_DecTree()
     
     def m_rgb(self, image_path):
         self.image_path = image_path
@@ -61,7 +64,11 @@ def process_image():
 
         df.to_pickle(os.path.join("c:/work/photo", "pixels.pkl"))
         print("Pixels saved to pixels.pkl successfully.")
-        
+
+        # Calculate the differences between adjacent pixels
+        m_rgb.mDecTree.calc_rgb_diffs(df)
+        m_rgb.mDecTree.print_out_max_diffs()
+
         return jsonify({"message": "Image processed successfully", "width": width, "height": height})
     return jsonify({"message": "No file uploaded"}), 400
 
