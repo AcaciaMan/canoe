@@ -43,6 +43,10 @@ def index():
 def picture():
     return render_template('picture.html')
 
+@app.route('/pictureSelect.html')
+def pictureSelect():
+    return render_template('pictureSelect.html')
+
 @app.route('/process_image', methods=['POST'])
 def process_image():
     file = request.files['image']

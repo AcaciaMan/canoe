@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB Pixel Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #imageCanvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>RGB Pixel Viewer</h1>
+    <input type="file" id="imageInput" accept="image/*">
+    <button onclick="processImage()">Process Image</button>
+    <canvas id="imageCanvas"></canvas>
+    <textarea id="ta" rows="15" cols="300"></textarea>
+     
+    <script>
+
+        let rect = { x: 0, y: 0, width: 15, height: 15 };
+        let firstMove = true;
+
+        let dragging = false;
+
+        const canvas = document.getElementById('imageCanvas');
+        const ctx = canvas.getContext('2d');
+
+
+
+        function displayRGBValues() {
+            const imageData = ctx.getImageData(rect.x+1, rect.y+1, rect.width+1, rect.height+1);
+            const data = imageData.data;
+            let r = 0, g = 0, b = 0;
+            let s = '';
+            for (let i = 0; i < data.length; i += 4) {
+                if (i>0 && i%(imageData.width*4) === 0) {
+                    s += '\n';
+                }
+                r = data[i];
+                g = data[i + 1];
+                b = data[i + 2];
+                s += `(${r},${g},${b}),`;
+
+            }
+
+                            // show the RGB values in the textarea
+                            document.getElementById('ta').value = `${s}`;
+
+        }
+
+        function processImage() {
+            console.log("Processing image");
+            const input = document.getElementById('imageInput');
+            if (input.files && input.files[0]) {
+                const formData = new FormData();
+                formData.append('image', input.files[0]);
+
+                        const canvas = document.getElementById('imageCanvas');
+                        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                        const img = new Image();
+                        img.onload = function() {
+                            // Set the canvas width and height to the image width and height
+                            const data = {
+                                width: img.width,
+                                height: img.height
+                            };
+                            canvas.width = data.width;
+                            canvas.height = data.height;
+                            draw();
+
+
+
+                            canvas.addEventListener('mousedown', (e) => {
+            const rectStart = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rectStart.left;
+            const mouseY = e.clientY - rectStart.top;
+            if (mouseX >= rect.x && mouseX <= rect.x + rect.width && mouseY >= rect.y && mouseY <= rect.y + rect.height) {
+                dragging = true;
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            // on first mouse move event, move the rectangle to the mouse position
+            // on second mouse move eevent, resize the rectangle
+            if (dragging) {
+                if (firstMove) {
+                    const rectStart = canvas.getBoundingClientRect();
+                    rect.x = e.clientX - rectStart.left - rect.width / 2;
+                    rect.y = e.clientY - rectStart.top - rect.height / 2;
+                } else {
+                    const rectStart = canvas.getBoundingClientRect();
+                    rect.width = e.clientX - rectStart.left - rect.x;
+                    rect.height = e.clientY - rectStart.top - rect.y;
+                }
+
+                draw();
+                displayRGBValues();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            dragging = false;
+            if (firstMove) {
+                firstMove = false;
+            } else {
+                firstMove = true;
+            }
+        });
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+            ctx.strokeStyle = 'red';
+            ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+        }
+
+                        };
+
+                        img.src = URL.createObjectURL(input.files[0]);
+            } else {
+                alert("No file selected");
+            }
+        }
+    </script>
+</body>
+</html>
