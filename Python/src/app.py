@@ -39,6 +39,10 @@ class M_RGB:
 def index():
     return render_template('index.html')
 
+@app.route('/picture.html')
+def picture():
+    return render_template('picture.html')
+
 @app.route('/process_image', methods=['POST'])
 def process_image():
     file = request.files['image']
