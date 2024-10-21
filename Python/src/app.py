@@ -68,6 +68,7 @@ def process_image():
         # Calculate the differences between adjacent pixels
         m_rgb.mDecTree.calc_rgb_diffs(df)
         m_rgb.mDecTree.print_out_max_diffs()
+        m_rgb.mDecTree.get_rg_not_b_pixels()
 
         return jsonify({"message": "Image processed successfully", "width": width, "height": height})
     return jsonify({"message": "No file uploaded"}), 400
