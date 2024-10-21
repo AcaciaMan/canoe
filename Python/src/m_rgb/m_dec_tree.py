@@ -146,17 +146,17 @@ class M_DecTree:
 
     def max_red_green_not_blue(self, diff):
         # Return True if the maximum difference is in the red or green channel and not in the blue channel
-        if abs(diff[0][2]) < 100:
+        if abs(diff[0][2]) < 50:
             return max(abs(diff[0][0]), abs(diff[0][1]))
         else:
-            return 100
+            return 50
 
     def max_rg_not_b(self, diff):
         # Return True if the maximum difference is in the red or green channel and not in the blue channel
-        if abs(diff[2]) < 100:
+        if abs(diff[2]) < 50:
             return max(abs(diff[0]), abs(diff[1]))
         else:
-            return 100
+            return 50
 
     def print_out_max_diffs(self):
         # Print out the top 10 maximum differences for red and green channels and not blue
@@ -172,7 +172,7 @@ class M_DecTree:
         rg_not_b_diffs = []
         rg_not_b_pixels = {}
         for diff, _ in self.sorted_diffs:
-            if self.max_rg_not_b(diff) > 100:
+            if self.max_rg_not_b(diff) > 50:
                 rg_not_b_diffs.append(diff)
             else:
                 break
