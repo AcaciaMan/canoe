@@ -33,18 +33,19 @@
 
 
         function displayRGBValues() {
-            const imageData = ctx.getImageData(rect.x, rect.y, rect.width, rect.height);
+            const imageData = ctx.getImageData(rect.x+1, rect.y+1, rect.width+1, rect.height+1);
             const data = imageData.data;
             let r = 0, g = 0, b = 0;
             let s = '';
             for (let i = 0; i < data.length; i += 4) {
+                if (i>0 && i%(imageData.width*4) === 0) {
+                    s += '\n';
+                }
                 r = data[i];
                 g = data[i + 1];
                 b = data[i + 2];
                 s += `(${r},${g},${b}),`;
-                if (i>0 && i%rect.width === 0) {
-                    s += '\n';
-                }
+
             }
 
                             // show the RGB values in the textarea
@@ -100,6 +101,8 @@
             ctx.drawImage(img, 0, 0);
             ctx.strokeStyle = 'red';
             ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+            ctx.strokeStyle = 'black';
+            ctx.strokeRect(rect.x + 5, rect.y, 1, rect.height);
         }
 
                         };
