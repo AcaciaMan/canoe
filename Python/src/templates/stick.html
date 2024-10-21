@@ -18,7 +18,15 @@
     <h1>RGB Pixel Viewer</h1>
     <button onclick="processImage()">Process Image</button>
     <canvas id="imageCanvas"></canvas>
+    <textarea id="ta" rows="15" cols="300"></textarea>
     <script>
+                let rect = { x: 0, y: 0, width: 15, height: 15 };
+                let dragging = false;
+
+
+
+
+
         function processImage() {
                 fetch('/stick_image', {
                     method: 'GET'
@@ -26,7 +34,6 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.message === "Image processed successfully") {
-                        alert(data.message);
                         // Display the image on the canvas
                         const canvas = document.getElementById('imageCanvas');
                         const ctx = canvas.getContext('2d');
@@ -57,7 +64,60 @@
                                 }
 
                             }
-                            ctx.putImageData(imageData, 0, 0);
+                            draw();
+
+                            function displayRGBValues() {
+            const imageData = ctx.getImageData(rect.x+1, rect.y+1, rect.width+1, rect.height+1);
+            const data = imageData.data;
+            let r = 0, g = 0, b = 0;
+            let s = '';
+            for (let i = 0; i < data.length; i += 4) {
+                if (i>0 && i%(imageData.width*4) === 0) {
+                    s += '\n';
+                }
+                r = data[i];
+                g = data[i + 1];
+                b = data[i + 2];
+                s += `(${r},${g},${b}),`;
+
+            }
+
+                            // show the RGB values in the textarea
+                            document.getElementById('ta').value = `${s}`;
+
+        }
+
+                            canvas.addEventListener('mousedown', (e) => {
+            const rectStart = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rectStart.left;
+            const mouseY = e.clientY - rectStart.top;
+            if (mouseX >= rect.x && mouseX <= rect.x + rect.width && mouseY >= rect.y && mouseY <= rect.y + rect.height) {
+                dragging = true;
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (dragging) {
+                const rectStart = canvas.getBoundingClientRect();
+                rect.x = e.clientX - rectStart.left - rect.width / 2;
+                rect.y = e.clientY - rectStart.top - rect.height / 2;
+                draw();
+                displayRGBValues();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            dragging = false;
+        });
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.putImageData(imageData, 0, 0);
+            ctx.strokeStyle = 'red';
+            ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+            ctx.strokeStyle = 'black';
+            ctx.strokeRect(rect.x + 5, rect.y, 1, rect.height);
+        }
                         
                     } else {
                         alert(data.message);
