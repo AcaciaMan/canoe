@@ -68,9 +68,12 @@ def process_image():
         # Calculate the differences between adjacent pixels
         m_rgb.mDecTree.calc_rgb_diffs(df)
         m_rgb.mDecTree.print_out_max_diffs()
-        m_rgb.mDecTree.get_rg_not_b_pixels()
+        rg_not_b_pixels = m_rgb.mDecTree.get_rg_not_b_pixels()
 
-        return jsonify({"message": "Image processed successfully", "width": width, "height": height})
+        # Convert the dictionary keys to strings
+        pixel_dict_str_keys = {f"{x},{y}": (r, g, b) for (x, y), (r, g, b) in rg_not_b_pixels.items()}
+
+        return jsonify({"message": "Image processed successfully", "width": width, "height": height, "pixels": pixel_dict_str_keys})
     return jsonify({"message": "No file uploaded"}), 400
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ class M_DecTree:
         self.diffs = {}
         self.sorted_diffs = {}
         self.pixels = {}
+        self.rgbs = {}
 
     def calc_rgb_diffs(self, df):
         self.df = df
@@ -17,6 +18,7 @@ class M_DecTree:
             x, y = index
             r, g, b = row
             rgbs[(x, y)] = (r, g, b)
+        self.rgbs = rgbs    
 
 
         for index, row in df.iterrows():
@@ -178,7 +180,7 @@ class M_DecTree:
         for diff in rg_not_b_diffs:
             pixel = self.pixels[diff]
             for p in pixel:
-                rg_not_b_pixels[p] = 1
+                rg_not_b_pixels[p] = self.rgbs[p]
 
         print(f"Number of pixels with red or green channel difference > 100 and blue channel difference < 100: {len(rg_not_b_pixels)}")        
 
