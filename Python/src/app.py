@@ -11,6 +11,7 @@ class M_RGB:
     def __init__(self):
         self.image_path = ""
         self.mDecTree = M_DecTree()
+        self.image = None
     
     def m_rgb(self, image_path):
         self.image_path = image_path
@@ -29,6 +30,8 @@ class M_RGB:
             for x in range(width):
                 r, g, b = pixels[x, y]
                 pixel_dict[(x, y)] = (r, g, b)
+
+        self.image = image        
 
         return pixel_dict, width, height
 
@@ -66,7 +69,7 @@ def process_image():
         print("Pixels saved to pixels.pkl successfully.")
 
         # Calculate the differences between adjacent pixels
-        m_rgb.mDecTree.calc_rgb_diffs(df)
+        m_rgb.mDecTree.calc_rgb_diffs(m_rgb.image)
         m_rgb.mDecTree.print_out_max_diffs()
         rg_not_b_pixels = m_rgb.mDecTree.get_rg_not_b_pixels()
 
