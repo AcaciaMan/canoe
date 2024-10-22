@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from sklearn.tree import DecisionTreeRegressor
 
@@ -95,25 +96,36 @@ class M_Stick:
         return is_point_in_triangle(px, py, v1, v2, v3) or is_point_in_triangle(px, py, v1, v3, v4)        
 
     def get_df(self):
+
+        # append from saved file the pixels
+        df = pd.read_pickle(os.path.join("c:/work/canoe_tree", 'stick_13_0_2_5.pkl'))
+        s='stick_14_0_1_8.pkl'
+        df1 = pd.read_pickle(os.path.join("c:/work/canoe_tree", s))
+        df = pd.concat([df, df1], ignore_index=True)
+
+
         # create a DataFrame for some pixels
         # the DataFrame will have columns r0, g0, b0, r1, g1, b1, ..., r56, g56, b56 for some pixel (x, y) from the self.siblings
-        pixels = []
-        target = []
+        pixels = []  # noqa: F841
+        target = []  # noqa: F841
         
         # Define the vertices of the quadrilateral
-        vertices = [(1, 3), (11, 3), (11, 391), (21, 391)]
+        vertices = [(2, 2), (8, 3), (4, 283), (10, 283)]  # noqa: F841
 
         # good is between x=0, y=3 and x=11, y=3 and x=11, y=391 and x=22, y=391
         # bad is everything else
-        good = []
-        bad = []
+        good = []  # noqa: F841
+        bad = []  # noqa: F841
+        s='''
         for i in range(len(self.pixels)):
             x, y, r, g, b = self.pixels[i]
             if self.is_point_in_quadrilateral(x, y, vertices):
                 good.append((x, y))
             else:
-                bad.append((x, y))
-
+                # append at random each 10th pixel
+                if i % 7 == 0:
+                    bad.append((x, y))
+        
 
         for p in bad:
             x, y = p
@@ -129,8 +141,11 @@ class M_Stick:
 
         df = pd.DataFrame(pixels, columns=self.columns)
         df["target"] = target  
+        df.to_pickle(os.path.join("c:/work/canoe_tree", "stick_13_0_2_5.pkl"))
+        '''
 
         self.df = df
+
 
     def train_model_regressor(self):
         # train a regressor model
@@ -138,7 +153,7 @@ class M_Stick:
         X = self.df[self.columns]
         y = self.df["target"]
 
-        self.regressor = DecisionTreeRegressor(random_state=42)
+        self.regressor = DecisionTreeRegressor(random_state=42, min_samples_leaf=5)
         self.regressor.fit(X, y)
 
 
