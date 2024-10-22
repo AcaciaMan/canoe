@@ -79,21 +79,41 @@ class M_Stick:
 
             self.siblings[(x, y)] = siblings
 
+    def is_point_in_quadrilateral(self, px, py, vertices):
+        def cross_product(x1, y1, x2, y2):
+            return x1 * y2 - y1 * x2
+
+        def is_point_in_triangle(px, py, v1, v2, v3):
+            d1 = cross_product(px - v1[0], py - v1[1], v2[0] - v1[0], v2[1] - v1[1])
+            d2 = cross_product(px - v2[0], py - v2[1], v3[0] - v2[0], v3[1] - v2[1])
+            d3 = cross_product(px - v3[0], py - v3[1], v1[0] - v3[0], v1[1] - v3[1])
+            has_neg = (d1 < 0) or (d2 < 0) or (d3 < 0)
+            has_pos = (d1 > 0) or (d2 > 0) or (d3 > 0)
+            return not (has_neg and has_pos)
+
+        v1, v2, v3, v4 = vertices
+        return is_point_in_triangle(px, py, v1, v2, v3) or is_point_in_triangle(px, py, v1, v3, v4)        
+
     def get_df(self):
         # create a DataFrame for some pixels
         # the DataFrame will have columns r0, g0, b0, r1, g1, b1, ..., r56, g56, b56 for some pixel (x, y) from the self.siblings
         pixels = []
         target = []
-        #bad = [(15,26),(16,26),(17,26),(18,26),(19,26),(6,328),(7,328),(8,328),(9,328),(10,328),(14,21),(15,21),(16,21),(2,172),(3,172),(4,172),(5,172),(17,85),(18,85),(19,85)  ]
-        bad = [(0,31),(1,31),(2,31),(10,31),(11,31),(12,31),(13,31),(14,31),(15,31),(16,31),(17,31),(18,31),(19,31),(20,31),(21,31),(22,31),(23,31),
-               (0,90),(1,90),(2,90),(3,90),(15,90),(16,90),(17,90),(18,90),(19,90),(20,90),(21,90),(22,90),(23,90),
-               (0,308),(1,308),(2,308),(3,308),(4,308),(5,308),(6,308),(7,308),(8,308),(19,308),(20,308),(21,308),(22,308),(23,308)
-               ]
-        #bad = []
-        good = [(3,31),(4,31),(5,31),(6,31),(7,31),(8,31),(9,31),
-                (4,90),(5,90),(6,90),(7,90),(8,90),(9,90),(10,90),(11,90),(12,90),(13,90),(14,90),
-                (9,308),(10,308),(11,308),(12,308),(13,308),(14,308),(15,308),(16,308),(17,308),(18,308)
-                ]
+        
+        # Define the vertices of the quadrilateral
+        vertices = [(1, 3), (11, 3), (11, 391), (21, 391)]
+
+        # good is between x=0, y=3 and x=11, y=3 and x=11, y=391 and x=22, y=391
+        # bad is everything else
+        good = []
+        bad = []
+        for i in range(len(self.pixels)):
+            x, y, r, g, b = self.pixels[i]
+            if self.is_point_in_quadrilateral(x, y, vertices):
+                good.append((x, y))
+            else:
+                bad.append((x, y))
+
 
         for p in bad:
             x, y = p
