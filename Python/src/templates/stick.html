@@ -18,6 +18,7 @@
     <h1>RGB Pixel Viewer</h1>
     <button onclick="processImage()">Process Image</button>
     <canvas id="imageCanvas"></canvas>
+    <textarea id="taxy" rows="15" cols="300"></textarea>
     <textarea id="ta" rows="15" cols="300"></textarea>
     <script>
                 let rect = { x: 0, y: 0, width: 15, height: 15 };
@@ -84,6 +85,16 @@
 
                             // show the RGB values in the textarea
                             document.getElementById('ta').value = `${s}`;
+            s = '';
+            for( let j=rect.y+1; j<rect.y+rect.height+1; j++){ 
+                for( let i=rect.x+1; i<rect.x+rect.width+1; i++){
+                
+                    s += `(${Math.floor(i)},${Math.floor(j)}),`;
+                }
+                s += '\n';
+
+            }
+            document.getElementById('taxy').value = `${s}`;
 
         }
 
