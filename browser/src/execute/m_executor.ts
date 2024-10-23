@@ -1,10 +1,12 @@
+import { M_Camera, M_Camera_Top } from "../perspective/m_camera";
 import { M_Gates5 } from "../perspective/m_gates5";
+import { M_Me } from "../perspective/m_me";
 import { M_CalcPosition } from "./m_calc_position";
 import { M_Draw, M_Draw_Boat, M_Draw_Top } from "./m_draw";
 
 export class M_Executor {
     // singleton
-    protected static instance: M_Executor;
+    static instance: M_Executor;
     static getInstance() {
         if (!M_Executor.instance) {
             M_Executor.instance = new M_Executor();
@@ -16,6 +18,8 @@ export class M_Executor {
     mCalcPosition: M_CalcPosition = new M_CalcPosition();
     sDelete = "";
     mDraw: M_Draw = new M_Draw();
+    mCamera: M_Camera = M_Camera.getInstance();
+    mMe: M_Me = M_Me.getInstance();
 
     constructor() {
     }
@@ -25,7 +29,7 @@ export class M_Executor {
         // calculate scene position of gates
         for (let i = 0; i < this.mGates5.aSticks.length; i++) {
             let mGate = this.mGates5.aSticks[i];
-            let mPosition = this.mCalcPosition.calcPosition(mGate.x, mGate.y);
+            let mPosition = this.mCamera.transform(mGate.x, mGate.y);
             mGate.scenex = mPosition.x;
             mGate.sceney = mPosition.y;
     }
@@ -38,9 +42,15 @@ export class M_Executor {
     draw() {
         let s = "";
         this.sDelete = "";
+
+        let svg = this.mDraw.drawBorder();
+        s += svg.s;
+        this.sDelete += svg.sDelete
+
+        
         for (let i = 0; i < this.mGates5.aSticks.length; i++) {
             let mGate = this.mGates5.aSticks[i];
-            let svg = this.mDraw.createSvg(mGate.scenex, mGate.sceney, mGate.color, mGate.d);
+            svg = this.mDraw.createSvg(mGate.scenex, mGate.sceney, mGate.color, mGate.d);
             s += svg.s;
             this.sDelete += svg.sDelete;
         }
@@ -51,31 +61,33 @@ export class M_Executor {
 }
 
 export class M_Executor_Top extends M_Executor {
-    
+    static topInstance: M_Executor_Top;
 
     static getInstance() {
-        if (!M_Executor_Top.instance) {
-            M_Executor_Top.instance = new M_Executor_Top();
+        if (!M_Executor_Top.topInstance) {
+          M_Executor_Top.topInstance = new M_Executor_Top();
         }
-        return M_Executor_Top.instance;
+        return M_Executor_Top.topInstance;
     }
 
 
     constructor() {
         super();
         this.mDraw = new M_Draw_Top();
+        this.mCamera = M_Camera_Top.getInstance();
     }
 
 
 }
 
 export class M_Executor_Boat extends M_Executor {
+    static boatInstance: M_Executor_Boat;
    
         static getInstance() {
-            if (!M_Executor_Boat.instance) {
-                M_Executor_Boat.instance = new M_Executor_Boat();
+            if (!M_Executor_Boat.boatInstance) {
+              M_Executor_Boat.boatInstance = new M_Executor_Boat();
             }
-            return M_Executor_Boat.instance;
+            return M_Executor_Boat.boatInstance;
         }
 
         constructor() {
@@ -88,7 +100,8 @@ export class M_Executor_Boat extends M_Executor {
             // calculate distance between me and gates
             for (let i = 0; i < this.mGates5.aSticks.length; i++) {
                 let mGate = this.mGates5.aSticks[i];
-                mGate.d = this.mCalcPosition.calcDistance(mGate.scenex, mGate.sceney);
+                const trans = this.mMe.transform(mGate.x, mGate.y);
+                mGate.d = this.mCalcPosition.calcDistance(trans.x, trans.y);
             }
 
             // sort gates by distance in descending order

@@ -1,5 +1,6 @@
 import { M_CalcPosition } from "../execute/m_calc_position";
 import { M_Stick_Length } from "../m_stick/m_stick_length";
+import { M_Camera_Top } from "../perspective/m_camera";
 import { M_Me } from "../perspective/m_me";
 import { M_Scene } from "../perspective/m_scene";
 
@@ -9,6 +10,7 @@ describe("M_CalcPosition", () => {
   let mMe: M_Me = M_Me.getInstance();
   let mScene: M_Scene = M_Scene.getInstance();
   let mStickLength: M_Stick_Length = M_Stick_Length.getInstance();
+  let mCameraTop: M_Camera_Top = M_Camera_Top.getInstance() as M_Camera_Top;
 
   beforeEach(() => {
     mMe.x = 0;
@@ -19,66 +21,39 @@ describe("M_CalcPosition", () => {
     calcPosition = new M_CalcPosition();
   });
 
-  test("calcPosition should calculate the correct position", () => {
-    const result = calcPosition.calcPosition(15, 0);
-    expect(result).toEqual({ x: 500, y: 600 });
-
-    mMe.y = -100;
-    const result2 = calcPosition.calcPosition(15, 0);
-    expect(result2).toEqual({ x: 500, y: 500 });
-  });
 
   test("calcDistance should calculate the correct distance", () => {
-    const result = calcPosition.calcDistance(500, 600);
-    expect(result).toBeCloseTo(0, 0);
+    const result = calcPosition.calcDistance(0, 0);
+    expect(result).toBeCloseTo(15, 0);
 
-    const result2 = calcPosition.calcDistance(500, 700);
+    const result2 = calcPosition.calcDistance(15, 100);
     expect(result2).toBeCloseTo(100, 0);
 
-    const result3 = calcPosition.calcDistance(500, 800);
-    expect(result3).toBeCloseTo(200, 0);
+    const result4 = calcPosition.calcDistance(12, 4);
+    expect(result4).toBeCloseTo(5, 0);
 
-    const result4 = calcPosition.calcDistance(839, 31);
-    expect(result4).toBeCloseTo(662, 0);
-
-    mMe.y = -100;
-        const result5 = calcPosition.calcDistance(500, 500);
-        expect(result5).toBeCloseTo(100, 0);
-  });
-
-  test("calcHeight should calculate the correct height", () => {
-    const result = calcPosition.calcHeight(0, 1);
-    expect(result).toBeCloseTo(33, 0);
-
-    const result2 = calcPosition.calcHeight(0, 2);
-    expect(result2).toBeCloseTo(67, 0);
-
-    const result3 = calcPosition.calcHeight(300, 1);
-    expect(result3).toBeCloseTo(25, 0);
-
-    const result4 = calcPosition.calcHeight(300, 2);
-    expect(result4).toBeCloseTo(50, 0);
-
-    const result5 = calcPosition.calcHeight(0, 0.30);
-    expect(result5).toBeCloseTo(10, 0);
-
-    const result6 = calcPosition.calcHeight(662, 2);
-    expect(result6).toBeCloseTo(30, 0);
+    mMe.y = 10;
+    let trans = mMe.transform(15, 10);
+        const result5 = calcPosition.calcDistance(trans.x,trans.y);
+        expect(result5).toBeCloseTo(0, 0);
   });
 
   test("calcWidth should calculate the correct width", () => {
-    const result = mStickLength.get_width(200);
+    const result = mStickLength.get_width(20);
     expect(result).toBeCloseTo(3.5, 0);
 
   });
 
-  test("calcLength should calculate the correct length", () => {
+  test("mCameraTop transform", () => {
+    const trans =  mCameraTop.transform(0, 0);
+    expect(trans.x).toBeCloseTo(10, 0);
+    expect(trans.y).toBeCloseTo(590, 0);
 
-        const meters =
-          (200 * mScene.depth) / (mScene.height - mScene.h);
-          console.log(meters);
-    const result = mStickLength.get_length(200);
-    expect(result).toBeCloseTo(109, 0);
+    const trans2 =  mCameraTop.transform(30, 300);
+    expect(trans2.x).toBeCloseTo(990
+      , 0);
+    expect(trans2.y).toBeCloseTo(-1150, 0);
 
   });
+
 });

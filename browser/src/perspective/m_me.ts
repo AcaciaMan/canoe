@@ -9,8 +9,6 @@ export class M_Me {
         return M_Me.instance;
     }
 
-    z: number = 1;
-    // what is type for x, y position?
     x: number = 0;
     y: number = 0;
 
@@ -19,6 +17,13 @@ export class M_Me {
 
     pressedx: number = 0;
     pressedy: number = 0;
+
+    transform(x: number, y: number): { x: number; y: number } {
+        return {
+            x: x,
+            y: y - (this.y + this.pressedy),
+        };
+    }
 
 
 }
