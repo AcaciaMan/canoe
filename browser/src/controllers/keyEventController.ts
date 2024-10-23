@@ -40,7 +40,7 @@ const handleKeyEvent = (req: Request, res: Response) => {
   res.json({ message: "Key event received" });
 };
 
-setInterval(() => {
+const checkControls = () => {
     let mTime = 0;
     if (mPressedTAt > 0) {
         mTime = Date.now() - mPressedTAt;
@@ -52,6 +52,6 @@ setInterval(() => {
 
         mMe.pressedy = -(600 * mTime) / 10000;
     }
-    }, 1000 / 24);
-
-export default { handleKeyEvent };
+  };
+  
+export default { handleKeyEvent, checkControls };

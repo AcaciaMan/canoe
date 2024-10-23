@@ -1,3 +1,4 @@
+import keyEventController from "../controllers/keyEventController";
 import { M_Camera, M_Camera_Top } from "../perspective/m_camera";
 import { M_Gates5 } from "../perspective/m_gates5";
 import { M_Me } from "../perspective/m_me";
@@ -26,6 +27,8 @@ export class M_Executor {
 
     calcPosition() {
 
+
+        keyEventController.checkControls();
         // calculate scene position of gates
         for (let i = 0; i < this.mGates5.aSticks.length; i++) {
             let mGate = this.mGates5.aSticks[i];
