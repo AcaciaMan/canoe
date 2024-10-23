@@ -1,3 +1,4 @@
+import { M_Stick_Length } from "../m_stick/m_stick_length";
 import { M_CalcPosition } from "./m_calc_position";
 
 export class M_Draw {
@@ -31,6 +32,7 @@ export class M_Draw_Boat extends M_Draw {
   mW: number = 0.15;
   mWater: number = 0.3;
   mCalcPosition: M_CalcPosition = new M_CalcPosition();
+  mStickLength: M_Stick_Length = M_Stick_Length.getInstance();
 
   constructor() {
     super();
@@ -39,13 +41,15 @@ export class M_Draw_Boat extends M_Draw {
   createSvg(x: number, y: number, color: string, d: number) {
     let s = "";
     let sDelete = "";
-    // draw a stick length 30 pixels, width 5 pixels and gradient color
-    const height = this.mCalcPosition.calcHeight(d, this.mH);
-    const width = this.mCalcPosition.calcHeight(d, this.mW);
-    const water = this.mCalcPosition.calcHeight(d, this.mWater);
+    // draw a stick length 30 pixels, width 5 pixels from top 30 pixels of the scene
+    const rectX = x;
+    const rectY = 30;
+    const rectWidth = this.mStickLength.get_width(d);
+    const rectHeight = this.mStickLength.get_length(d);
 
-    s += `<rect x="${x + water}" y="${y}" width="${width}" height="${height}" fill="${color}" />`;
-    sDelete += `<rect x="${x + water}" y="${y}" width="${width}" height="${height}" fill="white" stroke="white" stroke-width="2" />`;
+
+    s += `<rect x="${rectX}" y="${rectY}" width="${rectWidth}" height="${rectHeight}" fill="${color}" />`;
+    sDelete += `<rect x="${rectX}" y="${rectY}" width="${rectWidth}" height="${rectHeight}" fill="white" stroke="white" stroke-width="2" />`;
 
     return { s: s, sDelete: sDelete };
   }

@@ -1,4 +1,5 @@
 import { M_CalcPosition } from "../execute/m_calc_position";
+import { M_Stick_Length } from "../m_stick/m_stick_length";
 import { M_Me } from "../perspective/m_me";
 import { M_Scene } from "../perspective/m_scene";
 
@@ -7,6 +8,7 @@ describe("M_CalcPosition", () => {
   let calcPosition: M_CalcPosition;
   let mMe: M_Me = M_Me.getInstance();
   let mScene: M_Scene = M_Scene.getInstance();
+  let mStickLength: M_Stick_Length = M_Stick_Length.getInstance();
 
   beforeEach(() => {
     mMe.x = 0;
@@ -62,5 +64,21 @@ describe("M_CalcPosition", () => {
 
     const result6 = calcPosition.calcHeight(662, 2);
     expect(result6).toBeCloseTo(30, 0);
+  });
+
+  test("calcWidth should calculate the correct width", () => {
+    const result = mStickLength.get_width(200);
+    expect(result).toBeCloseTo(3.5, 0);
+
+  });
+
+  test("calcLength should calculate the correct length", () => {
+
+        const meters =
+          (200 * mScene.depth) / (mScene.height - mScene.h);
+          console.log(meters);
+    const result = mStickLength.get_length(200);
+    expect(result).toBeCloseTo(109, 0);
+
   });
 });
