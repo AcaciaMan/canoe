@@ -53,11 +53,16 @@ export class M_Draw_Top extends M_Draw {
         s+=`<line x1="${mTopRight.x}" y1="${mBottomLeft.y}" x2="${mTopRight.x}" y2="${mTopRight.y}" stroke="black" />`;
         s+=`<line x1="${mTopRight.x}" y1="${mTopRight.y}" x2="${mBottomLeft.x}" y2="${mTopRight.y}" stroke="black" />`;
         s+=`<line x1="${mBottomLeft.x}" y1="${mTopRight.y}" x2="${mBottomLeft.x}" y2="${mBottomLeft.y}" stroke="black" />`;
-        sDelete+=`<line x1="${mBottomLeft.x}" y1="${mBottomLeft.y}" x2="${mTopRight.x}" y2="${mBottomLeft.y}" stroke="white" stroke-width="2" />`;
-        sDelete+=`<line x1="${mTopRight.x}" y1="${mBottomLeft.y}" x2="${mTopRight.x}" y2="${mTopRight.y}" stroke="white" stroke-width="2" />`;
-        sDelete+=`<line x1="${mTopRight.x}" y1="${mTopRight.y}" x2="${mBottomLeft.x}" y2="${mTopRight.y}" stroke="white" stroke-width="2" />`;
-        sDelete+=`<line x1="${mBottomLeft.x}" y1="${mTopRight.y}" x2="${mBottomLeft.x}" y2="${mBottomLeft.y}" stroke="white" stroke-width="2" />`;
+
         
+
+
+
+        sDelete+=`<line x1="${mBottomLeft.x}" y1="${mBottomLeft.y}" x2="${mTopRight.x}" y2="${mBottomLeft.y}" stroke="white" stroke-width="3" />`;
+        sDelete+=`<line x1="${mTopRight.x}" y1="${mBottomLeft.y}" x2="${mTopRight.x}" y2="${mTopRight.y}" stroke="white" stroke-width="3" />`;
+        sDelete+=`<line x1="${mTopRight.x}" y1="${mTopRight.y}" x2="${mBottomLeft.x}" y2="${mTopRight.y}" stroke="white" stroke-width="3" />`;
+        sDelete+=`<line x1="${mBottomLeft.x}" y1="${mTopRight.y}" x2="${mBottomLeft.x}" y2="${mBottomLeft.y}" stroke="white" stroke-width="3" />`;
+
 
         return {s : s, sDelete : sDelete};
     }
