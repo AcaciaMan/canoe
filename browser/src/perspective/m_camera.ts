@@ -55,12 +55,11 @@ export class M_Camera_Top extends M_Camera {
       ((this.width - this.mRight - this.mLeft) * x) / this.mScene.width +
       this.mLeft;
 
-    let transy = this.mMe.transform(x, y).y;
     // if transy = 0, then transform to this.height - this.mTop, if transy=100, then transform to 0 + this.mBottom
-    transy =
+    const transy =
       this.height -
       this.mTop -
-      ((this.height - this.mTop - this.mBottom) * transy) / this.depth;
+      ((this.height - this.mTop - this.mBottom) * y) / this.depth;
 
     return {
       x: transx,
