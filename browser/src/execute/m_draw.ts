@@ -95,15 +95,16 @@ export class M_Draw_Boat extends M_Draw {
   createSvg(mCamera: M_Camera, x: number, y: number, color: string, d: number) {
     let s = "";
     let sDelete = "";
+
+    const mPosition = mCamera.transform(x, y);
+
     // draw a stick length 30 pixels, width 5 pixels from top 30 pixels of the scene
-    const rectX = x;
-    const rectY = 30;
     const rectWidth = this.mStickLength.get_width(d);
     const rectHeight = this.mStickLength.get_length(d);
 
 
-    s += `<rect x="${rectX}" y="${rectY}" width="${rectWidth}" height="${rectHeight}" fill="${color}" />`;
-    sDelete += `<rect x="${rectX}" y="${rectY}" width="${rectWidth}" height="${rectHeight}" fill="white" stroke="white" stroke-width="2" />`;
+    s += `<rect x="${mPosition.x}" y="${mPosition.y-rectHeight}" width="${rectWidth}" height="${rectHeight}" fill="${color}" />`;
+    sDelete += `<rect x="${mPosition.x}" y="${mPosition.y-rectHeight}" width="${rectWidth}" height="${rectHeight}" fill="white" stroke="white" stroke-width="2" />`;
 
     return { s: s, sDelete: sDelete };
   }

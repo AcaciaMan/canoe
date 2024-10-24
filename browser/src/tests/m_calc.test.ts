@@ -1,6 +1,6 @@
 import { M_CalcPosition } from "../execute/m_calc_position";
 import { M_Stick_Length } from "../m_stick/m_stick_length";
-import { M_Camera_Top } from "../perspective/m_camera";
+import { M_Camera_Boat, M_Camera_Top } from "../perspective/m_camera";
 import { M_Me } from "../perspective/m_me";
 import { M_Scene } from "../perspective/m_scene";
 
@@ -53,6 +53,19 @@ describe("M_CalcPosition", () => {
     expect(trans2.x).toBeCloseTo(990
       , 0);
     expect(trans2.y).toBeCloseTo(-1150, 0);
+
+  });
+
+  test("mCameraBoat transform", () => {
+    const mCameraBoat = M_Camera_Boat.getInstance();
+    const trans = mCameraBoat.transform(0, 0);
+    expect(trans.x).toBeCloseTo(0, 0);
+    expect(trans.y).toBeCloseTo(600, 0);
+
+    const trans2 = mCameraBoat.transform(30, 2.6);
+    expect(trans2.x).toBeCloseTo(975,0);
+    expect(trans2.y).toBeCloseTo(480,0);
+
 
   });
 

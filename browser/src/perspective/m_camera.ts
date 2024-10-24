@@ -81,13 +81,134 @@ export class M_Camera_Boat extends M_Camera {
     super();
   }
 
-  z: number = 1;
+  points: [number, number][] = [
+    [0,100],
+    [2.6, 97],
+    [3.2, 95],
+    [4.5, 90],
+    [7, 85],
+    [100, 80],
+  ];
 
-  horizon: number = 20;
-  h = (this.height * this.horizon) / 100;
-
-
-  perspective: number = 50;
+  pointsy: [number, number][] = [
+    [2.6, 20],
+    [3.2, 25],
+    [4.5, 30],
+    [7, 50],
+    [100, 100],
+  ];
 
   cmHeight: number = 18;
+
+    // Transform world coordinates to camera coordinates
+    transform(x: number, y: number): { x: number; y: number } {
+        let transx = 0;
+        let diffy = 0;
+        let diffp = 0;
+        let totalwidth = 100;
+        const absy = Math.abs(y);
+        // if y=0, if x = 0, then tarnsform to 0, if x=30, then transform to this.width
+        if (absy < 0.01) {
+           transx = (this.width * x) / this.mScene.width;
+        } else if (absy < 2.6) {
+          // if y = 0.01 meters, x is 100% of the width (the total width for 30 meters is 1000 pixels)
+          // if y = 2.6 meters, x is 97% of the width (the total width for 30 meters is 970 pixels)
+          // the x is linearly interpolated between y meters 0 and 2.6
+          diffy = 2.6 - absy;
+          diffp = ((100 - 97) * diffy) / 2.6;
+          totalwidth = ((100 - diffp) * this.width) / 100;
+          transx =
+            (this.width - totalwidth) / 2 +
+            (totalwidth * x) / this.mScene.width;
+        } else if (absy < 3.2) {
+          // if y = 2.6 meters, x is 97% of the width (the total width for 30 meters is 970 pixels)
+          // if y = 3.2 meters, x is 95% of the width (the total width for 30 meters is 950 pixels)
+          // the x is linearly interpolated between y meters 2.6 and 3.2
+          diffy = 3.2 - absy;
+          diffp = ((97 - 95) * diffy) / 0.6;
+          totalwidth = ((97 - diffp) * this.width) / 100;
+          transx =
+            (this.width - totalwidth) / 2 +
+            (totalwidth * x) / this.mScene.width;
+        } else if (absy < 4.5) {
+          // if y = 3.2 meters, x is 95% of the width (the total width for 30 meters is 950 pixels)
+          // if y = 4.5 meters, x is 90% of the width (the total width for 30 meters is 900 pixels)
+          // the x is linearly interpolated between y meters 3.2 and 4.5
+          diffy = 4.5 - absy;
+          diffp = ((95 - 90) * diffy) / 1.3;
+          totalwidth = ((95 - diffp) * this.width) / 100;
+          transx =
+            (this.width - totalwidth) / 2 +
+            (totalwidth * x) / this.mScene.width;
+        } else if (absy < 7) {
+          // if y = 4.5 meters, x is 90% of the width (the total width for 30 meters is 900 pixels)
+          // if y = 7 meters, x is 85% of the width (the total width for 30 meters is 850 pixels)
+          // the x is linearly interpolated between y meters 4.5 and 7
+          diffy = 7 - absy;
+          diffp = ((90 - 85) * diffy) / 2.5;
+          totalwidth = ((90 - diffp) * this.width) / 100;
+          transx =
+            (this.width - totalwidth) / 2 +
+            (totalwidth * x) / this.mScene.width;
+        } else if (absy <= 100) {
+          // if y = 7 meters, x is 85% of the width (the total width for 30 meters is 850 pixels)
+          // if y = 100 meters, x is 80% of the width (the total width for 30 meters is 800 pixels)
+          // the x is linearly interpolated between y meters 7 and 100
+          diffy = 100 - absy;
+          diffp = ((85 - 80) * diffy) / 93;
+          totalwidth = ((85 - diffp) * this.width) / 100;
+          transx =
+            (this.width - totalwidth) / 2 +
+            (totalwidth * x) / this.mScene.width;
+        } else {
+          diffy = 0;
+          diffp = 0;
+          totalwidth = (80 * this.width) / 100;
+          transx =
+            (this.width - totalwidth) / 2 +
+            (totalwidth * x) / this.mScene.width;
+        }
+
+        let transy = 0;
+        let diff = 0;
+        let diffpy = 0;
+        let totalheight = 100;
+        const signy = y < 0 ? -1 : 1;
+
+        if (absy < 2.6) {
+            diff = 2.6 - absy;
+            diffpy = 20*diff/2.6;
+            totalheight = this.height*(20-diffpy)/100;
+            transy = (this.height - totalheight*signy);
+        } else if (absy < 3.2) {
+            diff = 3.2 - absy;
+            diffpy = (25-20)*diff/0.6;
+            totalheight = this.height*(25-diffpy)/100;
+            transy = (this.height - totalheight*signy);
+        }   else if (absy < 4.5) {
+            diff = 4.5 - absy;
+            diffpy = (30-25)*diff/1.3;
+            totalheight = this.height*(30-diffpy)/100;
+            transy = (this.height - totalheight*signy);
+        } else if (absy < 7) {
+            diff = 7 - absy;
+            diffpy = (50-30)*diff/2.5;
+            totalheight = this.height*(50-diffpy)/100;
+            transy = (this.height - totalheight*signy);
+        } else if (absy <= 100) {
+            diff = 100 - absy;
+            diffpy = (100-50)*diff/93;
+            totalheight = this.height*(100-diffpy)/100;
+            transy = (this.height - totalheight*signy);
+        } else {
+            totalheight = this.height*10;
+            transy = (this.height - totalheight*signy);
+        }
+ 
+        return  {
+            x: transx,
+            y: transy,
+        };
+
+    }
 }

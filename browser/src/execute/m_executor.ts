@@ -1,5 +1,5 @@
 import keyEventController from "../controllers/keyEventController";
-import { M_Camera, M_Camera_Top } from "../perspective/m_camera";
+import { M_Camera, M_Camera_Boat, M_Camera_Top } from "../perspective/m_camera";
 import { M_Gates5 } from "../perspective/m_gates5";
 import { M_Me } from "../perspective/m_me";
 import { M_CalcPosition } from "./m_calc_position";
@@ -99,6 +99,7 @@ export class M_Executor_Boat extends M_Executor {
         constructor() {
             super();
             this.mDraw = new M_Draw_Boat();
+            this.mCamera = M_Camera_Boat.getInstance();
         }
 
         calcPosition() {
