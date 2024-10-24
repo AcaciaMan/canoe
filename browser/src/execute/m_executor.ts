@@ -17,6 +17,7 @@ export class M_Executor {
 
     mGates5: M_Gates5 = new M_Gates5();
     mCalcPosition: M_CalcPosition = new M_CalcPosition();
+    s = "";
     sDelete = "";
     mDraw: M_Draw = new M_Draw();
     mCamera: M_Camera = M_Camera.getInstance();
@@ -27,37 +28,28 @@ export class M_Executor {
 
     calcPosition() {
 
-
         keyEventController.checkControls();
+        this.s = "";
+        this.sDelete = "";
+
         // calculate scene position of gates
         for (let i = 0; i < this.mGates5.aSticks.length; i++) {
             let mGate = this.mGates5.aSticks[i];
-            let mPosition = this.mCamera.transform(mGate.x, mGate.y);
+            let mPosition = this.mMe.transform(mGate.x, mGate.y);
             mGate.scenex = mPosition.x;
             mGate.sceney = mPosition.y;
     }
     }
 
-    deletePrevious() {
-      return this.sDelete;
-    }
-
     draw() {
-        let s = "";
-        this.sDelete = "";
-
-        let svg = this.mDraw.drawBorder();
-        s += svg.s;
-        this.sDelete += svg.sDelete
-
         
         for (let i = 0; i < this.mGates5.aSticks.length; i++) {
             let mGate = this.mGates5.aSticks[i];
-            svg = this.mDraw.createSvg(mGate.scenex, mGate.sceney, mGate.color, mGate.d);
-            s += svg.s;
+            let svg = this.mDraw.createSvg(this.mCamera, mGate.scenex, mGate.sceney, mGate.color, mGate.d);
+            this.s += svg.s;
             this.sDelete += svg.sDelete;
         }
-        return s;
+        return this.s;
     }
 
 
@@ -78,6 +70,17 @@ export class M_Executor_Top extends M_Executor {
         super();
         this.mDraw = new M_Draw_Top();
         this.mCamera = M_Camera_Top.getInstance();
+    }
+
+    draw () {
+              let svg = this.mDraw.drawBorder();
+              this.s += svg.s;
+              this.sDelete += svg.sDelete;
+
+              super.draw();
+
+                return this.s;
+    
     }
 
 
@@ -103,8 +106,7 @@ export class M_Executor_Boat extends M_Executor {
             // calculate distance between me and gates
             for (let i = 0; i < this.mGates5.aSticks.length; i++) {
                 let mGate = this.mGates5.aSticks[i];
-                const trans = this.mMe.transform(mGate.x, mGate.y);
-                mGate.d = this.mCalcPosition.calcDistance(trans.x, trans.y);
+                mGate.d = this.mCalcPosition.calcDistance(mGate.scenex, mGate.sceney);
             }
 
             // sort gates by distance in descending order

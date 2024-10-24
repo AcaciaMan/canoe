@@ -1,5 +1,5 @@
 import { M_Stick_Length } from "../m_stick/m_stick_length";
-import { M_Camera_Top } from "../perspective/m_camera";
+import { M_Camera, M_Camera_Top } from "../perspective/m_camera";
 import { M_Me } from "../perspective/m_me";
 import { M_Scene } from "../perspective/m_scene";
 import { M_CalcPosition } from "./m_calc_position";
@@ -11,7 +11,7 @@ export class M_Draw {
   constructor() {
     }
     // create svg image in resources folder to draw a line 
-    createSvg(x: number, y: number, color: string, d: number) {
+    createSvg(mCamera: M_Camera, x: number, y: number, color: string, d: number) {
         return {s: "", sDelete: ""};
     }
 
@@ -31,21 +31,32 @@ export class M_Draw_Top extends M_Draw {
     }
 
 
-    createSvg(x: number, y: number, color: string, d: number) {
+    createSvg(mCamera: M_Camera,  x: number, y: number, color: string, d: number) {
         let s = "";
         let sDelete = "";
+
+        const mPosition = mCamera.transform(x, y);
+
+
+
         // draw a circle radius 2 pixels
-        s += `<circle cx="${x}" cy="${y}" r="4" fill="${color}" />`;
-        sDelete += `<circle cx="${x}" cy="${y}" r="4" stroke="white" stroke-width="2" fill="white" />`;
+        s += `<circle cx="${mPosition.x}" cy="${mPosition.y}" r="4" fill="${color}" />`;
+        sDelete += `<circle cx="${mPosition.x}" cy="${mPosition.y}" r="4" stroke="white" stroke-width="3" fill="white" />`;
         return {s : s, sDelete : sDelete};
     }
 
     drawBorder() {
         let s = "";
         let sDelete = "";
+
+        const mSceneBL = this.mMe.transform(0, 0);
+        const mSceneTR = this.mMe.transform(this.mScene.width, this.mScene.height);
+
+
+
         // draw a rectangle for the scene
-        const mBottomLeft = this.mCameraTop.transform(0, 0);
-        const mTopRight = this.mCameraTop.transform(this.mScene.width, this.mScene.height);
+        const mBottomLeft = this.mCameraTop.transform(mSceneBL.x, mSceneBL.y);
+        const mTopRight = this.mCameraTop.transform(mSceneTR.x, mSceneTR.y);
 
         //s+= `<rect x="${mBottomLeft.x}" y="${mTopRight.y}" width="${mTopRight.x - mBottomLeft.x}" height="${mBottomLeft.y - mTopRight.y}" stroke="black" />`;
         //sDelete += `<rect x="${mBottomLeft.x}" y="${mTopRight.y}" width="${mTopRight.x - mBottomLeft.x}" height="${mBottomLeft.y - mTopRight.y}" stroke="white" stroke-width="2" />`;
@@ -81,7 +92,7 @@ export class M_Draw_Boat extends M_Draw {
     super();
   }
 
-  createSvg(x: number, y: number, color: string, d: number) {
+  createSvg(mCamera: M_Camera, x: number, y: number, color: string, d: number) {
     let s = "";
     let sDelete = "";
     // draw a stick length 30 pixels, width 5 pixels from top 30 pixels of the scene

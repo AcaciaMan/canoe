@@ -41,17 +41,14 @@
         const svgString1 = await fetchSVG('/api/svg?class=gates5boat');
         
         drawSVG(svgString1);
+        requestAnimationFrame(drawSVGs);
       } catch (error) {
         console.error('Error fetching SVG:', error);
-        clearInterval(intervalId); // Stop the interval if the server is down
       }
     }
 
 
-    intervalId = setInterval(() => {    
     drawSVGs();
-        }, 1000 / 24); // Redraw the picture 24 times per second (24 FPS)
-
 
   </script>
   <script src="script.js"></script>
