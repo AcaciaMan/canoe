@@ -59,12 +59,12 @@ describe("M_CalcPosition", () => {
   test("mCameraBoat transform", () => {
     const mCameraBoat = M_Camera_Boat.getInstance();
     const trans = mCameraBoat.transform(0, 0);
-    expect(trans.x).toBeCloseTo(0, 0);
+    expect(trans.x).toBeCloseTo(-500, 0);
     expect(trans.y).toBeCloseTo(600, 0);
 
-    const trans2 = mCameraBoat.transform(30, 2.6);
-    expect(trans2.x).toBeCloseTo(975,0);
-    expect(trans2.y).toBeCloseTo(480,0);
+    const trans2 = mCameraBoat.transform(16, 1.3);
+    expect(trans2.x).toBeCloseTo(558,0);
+    expect(trans2.y).toBeCloseTo(540,0);
 
 
   });

@@ -82,11 +82,11 @@ export class M_Camera_Boat extends M_Camera {
   }
 
   points: [number, number][] = [
-    [0,100],
-    [2.6, 97],
-    [3.2, 95],
-    [4.5, 90],
-    [7, 85],
+    [0,200],
+    [2.6, 150],
+    [3.2, 130],
+    [4.5, 115],
+    [7, 100],
     [100, 80],
   ];
 
@@ -109,14 +109,17 @@ export class M_Camera_Boat extends M_Camera {
         const absy = Math.abs(y);
         // if y=0, if x = 0, then tarnsform to 0, if x=30, then transform to this.width
         if (absy < 0.01) {
-           transx = (this.width * x) / this.mScene.width;
+            totalwidth = this.width*2;
+                     transx =
+                       (this.width - totalwidth) / 2 +
+                       (totalwidth * x) / this.mScene.width;
         } else if (absy < 2.6) {
           // if y = 0.01 meters, x is 100% of the width (the total width for 30 meters is 1000 pixels)
           // if y = 2.6 meters, x is 97% of the width (the total width for 30 meters is 970 pixels)
           // the x is linearly interpolated between y meters 0 and 2.6
           diffy = 2.6 - absy;
-          diffp = ((100 - 97) * diffy) / 2.6;
-          totalwidth = ((100 - diffp) * this.width) / 100;
+          diffp = ((200 - 150) * diffy) / 2.6;
+          totalwidth = ((150 + diffp) * this.width) / 100;
           transx =
             (this.width - totalwidth) / 2 +
             (totalwidth * x) / this.mScene.width;
@@ -125,8 +128,8 @@ export class M_Camera_Boat extends M_Camera {
           // if y = 3.2 meters, x is 95% of the width (the total width for 30 meters is 950 pixels)
           // the x is linearly interpolated between y meters 2.6 and 3.2
           diffy = 3.2 - absy;
-          diffp = ((97 - 95) * diffy) / 0.6;
-          totalwidth = ((97 - diffp) * this.width) / 100;
+          diffp = ((150 - 130) * diffy) / 0.6;
+          totalwidth = ((130 + diffp) * this.width) / 100;
           transx =
             (this.width - totalwidth) / 2 +
             (totalwidth * x) / this.mScene.width;
@@ -135,8 +138,8 @@ export class M_Camera_Boat extends M_Camera {
           // if y = 4.5 meters, x is 90% of the width (the total width for 30 meters is 900 pixels)
           // the x is linearly interpolated between y meters 3.2 and 4.5
           diffy = 4.5 - absy;
-          diffp = ((95 - 90) * diffy) / 1.3;
-          totalwidth = ((95 - diffp) * this.width) / 100;
+          diffp = ((130 - 115) * diffy) / 1.3;
+          totalwidth = ((115 + diffp) * this.width) / 100;
           transx =
             (this.width - totalwidth) / 2 +
             (totalwidth * x) / this.mScene.width;
@@ -145,8 +148,8 @@ export class M_Camera_Boat extends M_Camera {
           // if y = 7 meters, x is 85% of the width (the total width for 30 meters is 850 pixels)
           // the x is linearly interpolated between y meters 4.5 and 7
           diffy = 7 - absy;
-          diffp = ((90 - 85) * diffy) / 2.5;
-          totalwidth = ((90 - diffp) * this.width) / 100;
+          diffp = ((115 - 100) * diffy) / 2.5;
+          totalwidth = ((100 + diffp) * this.width) / 100;
           transx =
             (this.width - totalwidth) / 2 +
             (totalwidth * x) / this.mScene.width;
@@ -155,8 +158,8 @@ export class M_Camera_Boat extends M_Camera {
           // if y = 100 meters, x is 80% of the width (the total width for 30 meters is 800 pixels)
           // the x is linearly interpolated between y meters 7 and 100
           diffy = 100 - absy;
-          diffp = ((85 - 80) * diffy) / 93;
-          totalwidth = ((85 - diffp) * this.width) / 100;
+          diffp = ((100 - 80) * diffy) / 93;
+          totalwidth = ((80 + diffp) * this.width) / 100;
           transx =
             (this.width - totalwidth) / 2 +
             (totalwidth * x) / this.mScene.width;
