@@ -1,8 +1,8 @@
 import os
 from flask import jsonify, render_template
-import numpy as np
 from m_rgb.m_trend import M_Trend
 from m_stick.m_stick import M_Stick
+from time import time
 
 def stick():
     return render_template('stick.html')
@@ -35,22 +35,21 @@ def trend():
 def trend_image():
 
     mTrend = M_Trend()
+    # benchmark
+    start_time = time()
     mTrend.load_image("gates.png")
+    end_time1 = time()
+    elapsed_time1 = end_time1 - start_time
+    print(f"Image load time: {elapsed_time1:.4f} seconds")
+
     pixels, width, height = mTrend.m_trend()
+    end_time2 = time()
+    elapsed_time2 = end_time2 - end_time1
+    print(f"Image process time: {elapsed_time2:.4f} seconds")
+
     print(f"Image size: {width}x{height}")
 
-    # return binary array of pixels rgb
-    aPixels = []
-    i=0
-    for y in range(height):
-        for x in range(width):
-            aPixels.append(pixels[i][0])
-            aPixels.append(pixels[i][1])
-            aPixels.append(pixels[i][2])
-            i += 1
-    # return uint8 array of pixels rgb
-    aPixels = np.array(aPixels, dtype=np.uint8)
-    return aPixels.tobytes()        
+    return pixels.tobytes()  
 
 
     
