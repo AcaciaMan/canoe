@@ -22,12 +22,12 @@ class M_RGB:
         #        r, g, b = pixels[x, y]
                 #print(f"Pixel at ({x}, {y}): R={r}, G={g}, B={b}")
 
-        # return array of pixels, x, y, r, g, b
+        # return array of pixels, r, g, b
         aPixels = []
         for y in range(height):
             for x in range(width):
                 r, g, b = pixels[x, y]
-                aPixels.append([x, y, r, g, b])
+                aPixels.append([r, g, b])
 
         return aPixels, width, height        
                 

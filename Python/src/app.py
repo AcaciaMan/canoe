@@ -104,6 +104,9 @@ def process_image():
 app.add_url_rule('/stick.html', view_func=routes.stick)
 app.add_url_rule('/stick_image', view_func=routes.stick_image)
 
+app.add_url_rule('/trend.html', view_func=routes.trend)
+app.add_url_rule('/trend_image', view_func=routes.trend_image)
+
 if __name__ == "__main__":
     if not os.path.exists('uploads'):
         os.makedirs('uploads')
