@@ -1,9 +1,5 @@
 import sharp from "sharp";
-import ndarray from "ndarray";
-import { TimeSeries } from "timeseries-analysis";
-//const TimeSeries = require("timeseries-analysis").TimeSeries;
-
-import { add } from "ndarray-ops";
+import { STL } from "./m_stl";
 
 export class M_Trend {
   // singleton
@@ -19,18 +15,21 @@ export class M_Trend {
   data: Buffer | undefined;
   info: sharp.OutputInfo | undefined;
   dr: {
-    trend: number[];
-    seasonal: number[];
+    observed: Uint8Array;
+    trend: Uint8Array;
+    seasonal: Int16Array;
     residual: number[];
   }[] = [];
   dg: {
-    trend: number[];
-    seasonal: number[];
+    observed: Uint8Array;
+    trend: Uint8Array;
+    seasonal: Int16Array;
     residual: number[];
   }[] = [];
   db: {
-    trend: number[];
-    seasonal: number[];
+    observed: Uint8Array;
+    trend: Uint8Array;
+    seasonal: Int16Array;
     residual: number[];
   }[] = [];
 
@@ -43,58 +42,48 @@ export class M_Trend {
       this.data = data;
       this.info = info;
 
-      // make number arrays for each channel each row
-      const rgbPoints = [];
+      // initialize the observed, trend, seasonal, and residual arrays
+      this.dr = Array.from({ length: info.height }, () => ({
+        observed: new Uint8Array(info.width),
+        trend: new Uint8Array(info.width),
+        seasonal: new Int16Array(info.width),
+        residual: new Array(info.width),
+      }));
+      this.dg = Array.from({ length: info.height }, () => ({
+        observed: new Uint8Array(info.width),
+        trend: new Uint8Array(info.width),
+        seasonal: new Int16Array(info.width),
+        residual: new Array(info.width),
+      }));
+      this.db = Array.from({ length: info.height }, () => ({
+        observed: new Uint8Array(info.width),
+        trend: new Uint8Array(info.width),
+        seasonal: new Int16Array(info.width),
+        residual: new Array(info.width),
+      }));
+
       for (let y = 0; y < info.height; y++) {
-        const row = [];
         for (let x = 0; x < info.width; x++) {
           const index = (y * info.width + x) * 4;
-          const r = data[index];
-          const g = data[index + 1];
-          const b = data[index + 2];
-          row.push([r, g, b]);
+          this.dr[y].observed[x] = data[index];
+          this.dg[y].observed[x] = data[index + 1];
+          this.db[y].observed[x] = data[index + 2];
         }
-        rgbPoints.push(row);
       }
 
+      // Create STL instance
+      const stl = new STL(50, 0.7);
+
       // decompose each row into trend, seasonal, and residual
-      let decomposed = rgbPoints.map((row) =>
-        this.decomposeTimeSeries(row.map(([r, g, b]) => r))
-      );
-      this.dr = decomposed.map(({ trend, seasonal, residual }) => ({
-        trend,
-        seasonal,
-        residual,
-      }));
-
-      decomposed = rgbPoints.map((row) =>
-        this.decomposeTimeSeries(row.map(([r, g, b]) => g))
-      );
-      this.dg = decomposed.map(({ trend, seasonal, residual }) => ({
-        trend,
-        seasonal,
-        residual,
-      }));
-
-      decomposed = rgbPoints.map((row) =>
-        this.decomposeTimeSeries(row.map(([r, g, b]) => b))
-      );
-      this.db = decomposed.map(({ trend, seasonal, residual }) => ({
-        trend,
-        seasonal,
-        residual,
-      }));
+      for (let y = 0; y < info.height; y++) {
+        const { seasonal, trend, residual } = stl.decompose(
+          this.dr[y].observed
+        );
+        this.dr[y].seasonal = seasonal;
+        this.dr[y].trend = trend;
+        this.dr[y].residual = residual;
+      }
     }
-  }
-
-  decomposeTimeSeries(data: number[]) {
-    const t = new TimeSeries(data);
-
-    const trend = t.smoother({ period: 50 }).data;
-    const seasonal = t.detrend().smoother({ period: 50 }).data;
-    const residual = data.map((d, i) => d - trend[i] - seasonal[i]);
-
-    return { trend, seasonal, residual };
   }
 
   m_trend() {
@@ -105,56 +94,19 @@ export class M_Trend {
     const width = this.info.width;
     const height = this.info.height;
 
-    // process the image
-    const { outR, outG, outB } = this.processImage(width, height);
-
     // convert the result to a buffer
     const data = Buffer.alloc(this.info.width * this.info.height * 3);
-    for (let y = 0; y < this.info.height; y++) {
-      for (let x = 0; x < this.info.width; x++) {
-        const index = (y * this.info.width + x) * 3;
-        data[index] = outR.get(y, x);
-        data[index + 1] = outG.get(y, x);
-        data[index + 2] = outB.get(y, x);
+
+    // combine the trend, seasonal, and residual into a single image
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const index = (y * width + x) * 3;
+        data[index] = this.dr[y].trend[x];
+        data[index + 1] = this.dg[y].trend[x];
+        data[index + 2] = this.db[y].trend[x];
       }
     }
 
     return data;
-  }
-
-  processImage(
-    width: number,
-    height: number
-  ): { outR: any; outG: any; outB: any } {
-    // Flatten the trend arrays
-    const drFlat = this.dr.flatMap(({ trend }) => trend);
-    const dgFlat = this.dg.flatMap(({ trend }) => trend);
-    const dbFlat = this.db.flatMap(({ trend }) => trend);
-
-    // Create ndarray instances
-    const dr = ndarray(Array.from(new Float32Array(drFlat)), [height, width]);
-    const dg = ndarray(Array.from(new Float32Array(dgFlat)), [height, width]);
-    const db = ndarray(Array.from(new Float32Array(dbFlat)), [height, width]);
-
-    // Create output ndarrays
-    const outR = ndarray(Array.from(new Float32Array(width * height)), [
-      height,
-      width,
-    ]);
-    const outG = ndarray(Array.from(new Float32Array(width * height)), [
-      height,
-      width,
-    ]);
-    const outB = ndarray(Array.from(new Float32Array(width * height)), [
-      height,
-      width,
-    ]);
-
-    // Add the trend of each channel
-    add(outR, outR, dr);
-    add(outG, outG, dg);
-    add(outB, outB, db);
-
-    return { outR, outG, outB };
   }
 }
