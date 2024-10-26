@@ -1,6 +1,4 @@
 import os
-from matplotlib.pylab import rand
-from requests import get
 import statsmodels.api as sm
 
 from m_rgb.m_rgb import M_RGB
