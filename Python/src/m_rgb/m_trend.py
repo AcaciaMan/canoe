@@ -1,5 +1,6 @@
 import os
 from matplotlib.pylab import rand
+from requests import get
 import statsmodels.api as sm
 
 from m_rgb.m_rgb import M_RGB
@@ -28,6 +29,8 @@ class M_Trend:
             self.height = 0
             self.pixels = None
             # byte array of image rgb
+            self.u150 = np.uint8(150)
+            self.u75 = np.uint8(75)
             self.image = None
 
 
@@ -91,20 +94,43 @@ class M_Trend:
 
     
     def m_trend(self):
+        # randomize the residual component assigning each pixel a random value
+        # Randomize the residual component assigning each pixel a random value
+        tr_shape = self.tr[:, :, 2].shape
+        tg_shape = self.tg[:, :, 2].shape
+        tb_shape = self.tb[:, :, 2].shape
 
-        k=0
-        for i in range(self.height):
-            for j in range(self.width):
+        tr_random = np.random.rand(*tr_shape)
+        tg_random = np.random.rand(*tg_shape)
+        tb_random = np.random.rand(*tb_shape)
 
-                self.image[k] = self.tr[i,j,0] + self.tr[i,j,1]
+        tr = self.tr[:, :, 2] * tr_random
+        tg = self.tg[:, :, 2] * tg_random
+        tb = self.tb[:, :, 2] * tb_random
 
-                k += 1
-                self.image[k] = self.tg[i,j,0] + self.tg[i,j,1]
+        #tr = self.tr[:, :, 2]*rand()
+        #tg = self.tg[:, :, 2]*rand()
+        #tb = self.tb[:, :, 2]*rand()
+        
 
-                k += 1
-                self.image[k] = self.tb[i,j,0] +   self.tb[i,j,1]
 
-                k += 1
+        # Use numpy vectorized operations to speed up the process
+        tr_combined = np.clip(self.tr[:, :, 0] + self.tr[:, :, 1] + tr, 0, 255)
+        tg_combined = np.clip(self.tg[:, :, 0] + self.tg[:, :, 1] + tg, 0, 255)
+        tb_combined = np.clip(self.tb[:, :, 0] + self.tb[:, :, 1] + tb, 0, 255)
 
+        # Convert to uint8 directly
+        tr_combined = tr_combined.astype(np.uint8)
+        tg_combined = tg_combined.astype(np.uint8)
+        tb_combined = tb_combined.astype(np.uint8)
+
+        # Flatten the arrays and interleave the RGB components
+        self.image[0::3] = tr_combined.flatten()
+        self.image[1::3] = tg_combined.flatten()
+        self.image[2::3] = tb_combined.flatten()
 
         return self.image, self.width, self.height
+    
+
+
+    
