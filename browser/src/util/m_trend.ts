@@ -76,7 +76,21 @@ export class M_Trend {
       const stl = new STL(2, 0.7);
       console.log("decomposing", stl);
 
+
       // decompose each row into trend, seasonal, and residual
+      const start = new Date().getTime();
+      let observed = this.dr[0].observed;
+        const { seasonal, trend, residual } = stl.decompose(
+          observed
+        );
+        const end = new Date().getTime();
+        console.log(`Decompsoe time: ${end - start} ms`, observed.length);
+        console.log(seasonal);
+        console.log(trend);
+        console.log(residual);
+
+
+      /*
       
       for (let y = 0; y < 1; y++) {
         const { seasonal, trend, residual } = stl.decompose(
@@ -86,7 +100,7 @@ export class M_Trend {
         this.dr[y].trend = trend;
         this.dr[y].residual = residual;
       }
-      
+      */
   }
   }
 

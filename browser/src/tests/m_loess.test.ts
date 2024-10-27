@@ -11,9 +11,10 @@ describe("M_Loess", () => {
     });
     
     test("calculateWeights should calculate the correct weights", () => {
-        const x = [1,2,3];
-        const xi = 3;
-        const distances = [...x].map((x) => Math.abs(xi - x));
+        const x = Array.from({ length: 60 }, (_, idx) => idx);
+        const xi = 30;
+        //const distances = [...x].map((x) => Math.abs(xi - x));
+        const distances =x.filter((x) => Math.abs(xi - x) <= 30);
         console.log([...x]);
         console.log(distances);
         console.log(Math.max(...distances));
@@ -47,9 +48,9 @@ describe("M_Loess", () => {
 
     test("stl", () => {
         // populate data with 500 random Uint8 values
-        const data = new Uint8Array(500).map(() => Math.floor(Math.random() * 256));
+        const data = new Uint8Array(1330).map(() => Math.floor(Math.random() * 256));
         const period = 2;
-        const bandwidth = 0.7;
+        const bandwidth = 0.3;
         const stl = new STL(period, bandwidth);
         const start = new Date().getTime();
         const result = stl.decompose(data);
@@ -67,8 +68,10 @@ describe("M_Loess", () => {
             "gates.png"
           );
           console.log(pngPath);
-
+        const start = new Date().getTime();
           await mTrend.load_image(pngPath);
+        const end = new Date().getTime();
+        console.log(`Execution time: ${end - start} ms`);
             console.log("loaded image");
 
             return;

@@ -37,17 +37,14 @@ export class Loess {
 
   calculateWeights(x: number[], xi: number): number[] {
     const n = x.length;
-    const weights = new Array(n);
-    const distances = x.map((x) => Math.abs(xi - x));
-    const maxDistance = Math.max(...distances);
+    const weights = new Array(n).fill(0);
+    const maxDistance = 50;
+    const startIdx = Math.max(0, xi - 30);
+    const endIdx = Math.min(xi + 30, n);
 
-    for (let i = 0; i < n; i++) {
-      const distance = distances[i]/maxDistance;
-      if (distance <= this.bandwidth) {
-        weights[i] = Math.pow(1 - Math.pow(distance / this.bandwidth, 3), 3);
-      } else {
-        weights[i] = 0;
-      }
+    for (let i = startIdx; i < endIdx; i++) {
+      const distance = Math.abs(i-xi)/maxDistance;
+        weights[i] = Math.pow(1 - Math.pow(distance, 3), 3);
     }
 
     return weights;
