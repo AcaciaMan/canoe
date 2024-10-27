@@ -5,7 +5,8 @@ export class STL {
   private period: number;
   private seasonal: Int16Array = new Int16Array(0);
   private trend: Uint8Array = new Uint8Array(0);
-  private residual: number[] = [];
+  private residual: Uint8Array = new Uint8Array(0);
+  private mSign: Uint8Array = new Uint8Array(0);
 
   constructor(period: number, bandwidth: number) {
     this.period = period;
@@ -15,12 +16,14 @@ export class STL {
   decompose(data: Uint8Array): {
     seasonal: Int16Array;
     trend: Uint8Array;
-    residual: number[];
+    residual: Uint8Array;
+    mSign: Uint8Array;
   } {
     const n = data.length;
     this.seasonal = new Int16Array(n);
     this.trend = new Uint8Array(n);
-    this.residual = new Array(n);
+    this.residual = new Uint8Array(n);
+    this.mSign = new Uint8Array(n);
 
     // Initial seasonal component estimation
     for (let i = 0; i < this.period; i++) {
@@ -46,12 +49,21 @@ export class STL {
       smoothTrend.forEach((d, i) => (this.trend[i] = Math.max(0,Math.min(255,d))));
 
     // Calculate residual component
-    this.residual = [...data].map((d, i) => d - this.trend[i] - this.seasonal[i]);
-
+    for (let i = 0; i < n; i++) {
+      const resid = data[i] - this.seasonal[i] - this.trend[i];
+      if (resid < 0) {
+        this.mSign[i] = 1;
+        this.residual[i] = Math.min(-resid, 255);
+      } else {
+        this.mSign[i] = 0;
+        this.residual[i] = Math.min(resid, 255);
+      }
+    }
     return {
       seasonal: this.seasonal,
       trend: this.trend,
       residual: this.residual,
+      mSign: this.mSign,
     };
   }
 }
