@@ -10,8 +10,8 @@ export class Loess {
 
   mPreCalcLoess: M_PreCalcLoess = M_PreCalcLoess.getInstance();
 
-  smooth(x: number[], y: Uint8Array): Int16Array {
-    const n = x.length;
+  smooth(y: Uint8Array): Int16Array {
+    const n = y.length;
     const smoothed = new Int16Array(n);
 
     for (let i = 0; i < n; i++) {

@@ -38,7 +38,7 @@ export class M_PreCalcLoess {
 
   // calculate weights for loess smoothing
   calculateWeights() {
-    const n = this.around * 2;
+    const n = this.around * 2+1;
     const weights = new Array(n);
     const startIdx = 0;
     const endIdx = n;

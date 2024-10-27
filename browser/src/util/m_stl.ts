@@ -26,7 +26,7 @@ export class STL {
     for (let i = 0; i < this.period; i++) {
       const seasonalData = data.filter((_, idx) => idx % this.period === i);
       const smoothed = this.loess.smooth(
-        [...seasonalData].map((_, idx) => idx), seasonalData
+        seasonalData
       );
       for (let j = 0; j < smoothed.length; j++) {
         this.seasonal[i + j * this.period] = smoothed[j];
@@ -40,7 +40,7 @@ export class STL {
 
       // Estimate trend component
       const smoothTrend = this.loess.smooth(
-        [...detrendedUint8].map((_, idx) => idx), detrendedUint8
+         detrendedUint8
       );
 
       smoothTrend.forEach((d, i) => (this.trend[i] = Math.max(0,Math.min(255,d))));

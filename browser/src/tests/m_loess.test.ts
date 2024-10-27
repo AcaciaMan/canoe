@@ -37,7 +37,7 @@ describe("M_Loess", () => {
         const x = [1, 2, 3, 4, 5];
         const y = new Uint8Array([10, 20, 30, 40, 50]);
 
-        const result = loess.smooth(x, y);
+        const result = loess.smooth( y);
         console.log(result);
     });
 
@@ -48,14 +48,13 @@ describe("M_Loess", () => {
     });
 
     test("loess", () => {
-        const x = Array.from({ length: 1337 }, (_, idx) => idx);
         const y = new Uint8Array(1337).map(() => Math.floor(Math.random() * 256));
         const mPre = M_PreCalcLoess.getInstance();
         console.log(mPre.getWeights());
         console.log(mPre.getSumWeights());
 
         const start = new Date().getTime();
-        const result = loess.smooth(x, y);
+        const result = loess.smooth(y);
         const end = new Date().getTime();
         console.log(`Execution time: ${end - start} ms`);
         console.log(result);
@@ -65,7 +64,7 @@ describe("M_Loess", () => {
         // populate data with 500 random Uint8 values
         const data = new Uint8Array(1330).map(() => Math.floor(Math.random() * 256));
         const period = 2;
-        const bandwidth = 0.3;
+        const bandwidth = 0.7;
         const stl = new STL(period, bandwidth);
         const start = new Date().getTime();
         const result = stl.decompose(data);
