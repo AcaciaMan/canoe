@@ -46,7 +46,8 @@ describe("M_Loess", () => {
     });
 
     test("stl", () => {
-        const data = new Uint8Array([1,2,3,4,5,6,7,8,9,10]);
+        // populate data with 500 random Uint8 values
+        const data = new Uint8Array(500).map(() => Math.floor(Math.random() * 256));
         const period = 2;
         const bandwidth = 0.7;
         const stl = new STL(period, bandwidth);
@@ -67,8 +68,10 @@ describe("M_Loess", () => {
           );
           console.log(pngPath);
 
-          mTrend.load_image(pngPath);
+          await mTrend.load_image(pngPath);
             console.log("loaded image");
+
+            return;
 
 
     }

@@ -77,6 +77,7 @@ export class M_Trend {
       console.log("decomposing", stl);
 
       // decompose each row into trend, seasonal, and residual
+      
       for (let y = 0; y < 1; y++) {
         const { seasonal, trend, residual } = stl.decompose(
           this.dr[y].observed
@@ -85,7 +86,7 @@ export class M_Trend {
         this.dr[y].trend = trend;
         this.dr[y].residual = residual;
       }
-
+      
   }
   }
 
