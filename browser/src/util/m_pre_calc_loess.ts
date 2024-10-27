@@ -20,7 +20,8 @@ export class M_PreCalcLoess {
   sumWeightedX: number | undefined;
     sumWeightedX2: number | undefined;
     meanX: number | undefined;
-
+randomNumbers: number[] = Array.from({ length: 11 }, () => Math.random());
+ith = 0;
 
   getWeights() {
     if (this.weights === undefined) {
@@ -84,6 +85,13 @@ export class M_PreCalcLoess {
         return this.meanX;
     }
 
+    getRandomMultiplication(n: number) {
+        this.ith++;
+        if (this.ith === 11) {
+        this.ith = 0;
+        }
+        return this.randomNumbers[this.ith] * n;
+    }
 
 
 

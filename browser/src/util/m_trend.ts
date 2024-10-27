@@ -1,5 +1,6 @@
 import sharp from "sharp";
 import { STL } from "./m_stl";
+import { M_PreCalcLoess } from "./m_pre_calc_loess";
 
 export class M_Trend {
   // singleton
@@ -35,6 +36,7 @@ export class M_Trend {
     residual: number[];
     output: number[];
   }[] = [];
+  mPreCalcLoess: M_PreCalcLoess = M_PreCalcLoess.getInstance();
 
   async load_image(pngPath: string) {
     if (this.data === undefined|| this.info === undefined) {
