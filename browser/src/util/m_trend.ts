@@ -1,6 +1,8 @@
 import sharp from "sharp";
 import { STL } from "./m_stl";
 import { M_PreCalcLoess } from "./m_pre_calc_loess";
+import { randomBytes } from "crypto";
+import e from "express";
 
 export class M_Trend {
   // singleton
@@ -154,10 +156,8 @@ export class M_Trend {
           this.dr[y].trend,
           this.dr[y].residual,
           this.dr[y].mSign,
-          Math.floor(Math.random() * 100)
-        ).then((result) => {
-          this.dr[y].output = result;
-        })
+          this.dr[y].output
+        ).then(() => {})
       );
       promises.push(
         this.combineArrays(
@@ -165,10 +165,8 @@ export class M_Trend {
           this.dg[y].trend,
           this.dg[y].residual,
           this.dg[y].mSign,
-          Math.floor(Math.random() * 100)
-        ).then((result) => {
-          this.dg[y].output = result;
-        })
+          this.dg[y].output
+        ).then(() => {})
       );
       promises.push(
         this.combineArrays(
@@ -176,10 +174,8 @@ export class M_Trend {
           this.db[y].trend,
           this.db[y].residual,
           this.db[y].mSign,
-          Math.floor(Math.random() * 100)
-        ).then((result) => {
-          this.db[y].output = result;
-        })
+          this.db[y].output
+        ).then(() => {})
       );
     }
 
@@ -197,23 +193,29 @@ export class M_Trend {
     });
   }
 
-  private getRandomInt(): number {
-    return Math.floor(Math.random() * 4);
-  }
 
-  async combineArrays(arr1: Int16Array, arr2: Uint8Array, arr3: Uint8Array, arr4: Uint8Array, rnd: number) {
-    return new Promise<Uint8Array>((resolve, reject) => {
-      const result = new Uint8Array(arr1.length);
+
+  async combineArrays(arr1: Int16Array, arr2: Uint8Array, arr3: Uint8Array, arr4: Uint8Array, result: Uint8Array) {
+    return new Promise<void>((resolve, reject) => {
+
+      const randomByte = new Uint8Array(1).fill(0).map(() => Math.floor(Math.random() * 100));
 
       for (let i = 0; i < arr1.length; i++) {
+        const mSum = this.mRandomNumbers[randomByte[0] + i];
         if (arr4[i] === 1) {
-          result[i] = Math.min(255, Math.max(0, arr1[i] + arr2[i] - (arr3[i] >> this.mRandomNumbers[i+rnd])));
+          result[i] = Math.min(
+            255,
+            Math.max(
+              0,
+              arr1[i] + arr2[i] - (arr3[i] >> mSum)
+            )
+          );
         } else {
         result[i] = Math.min(
           255,
           Math.max(
             0,
-            (arr1[i] + arr2[i] + (arr3[i] >> this.mRandomNumbers[i+rnd]))
+            arr1[i] + arr2[i] + (arr3[i] >> mSum)
           )
         );
       }
@@ -221,7 +223,7 @@ export class M_Trend {
 
     }
 
-      resolve(result);
+      resolve();
     });
   }
 }
