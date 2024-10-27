@@ -1,4 +1,3 @@
-import * as ss from "simple-statistics";
 import { M_PreCalcLoess } from "./m_pre_calc_loess";
 
 export class Loess {
@@ -37,7 +36,7 @@ export class Loess {
       const weightedY = [...around].map((yi, idx) => yi * weights[idx]);
       const endedWeights = performance.now();
       totalEndedWeights += endedWeights - startedWeights;
-      const sumWeightedY = ss.sum(weightedY);
+      const sumWeightedY = weightedY.reduce((acc, val) => acc + val, 0);
       const endedSumWeightedY = performance.now();
       totalEndedSumWeightedY += endedSumWeightedY - endedWeights;
 
@@ -68,18 +67,4 @@ export class Loess {
     return smoothed;
   }
 
-  calculateWeights(x: number[], xi: number): number[] {
-    const n = x.length;
-    const weights = new Array(n).fill(0);
-    const maxDistance = 50;
-    const startIdx = Math.max(0, xi - 30);
-    const endIdx = Math.min(xi + 30, n);
-
-    for (let i = startIdx; i < endIdx; i++) {
-      const distance = Math.abs(i-xi)/maxDistance;
-        weights[i] = Math.pow(1 - Math.pow(distance, 3), 3);
-    }
-
-    return weights;
-  }
 }
