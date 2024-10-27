@@ -19,21 +19,21 @@ export class M_Trend {
     trend: Uint8Array;
     seasonal: Int16Array;
     residual: number[];
-    output: Uint8Array;
+    output: number[];
   }[] = [];
   dg: {
     observed: Uint8Array;
     trend: Uint8Array;
     seasonal: Int16Array;
     residual: number[];
-    output: Uint8Array;
+    output: number[];
   }[] = [];
   db: {
     observed: Uint8Array;
     trend: Uint8Array;
     seasonal: Int16Array;
     residual: number[];
-    output: Uint8Array;
+    output: number[];
   }[] = [];
 
   async load_image(pngPath: string) {
@@ -52,21 +52,21 @@ export class M_Trend {
         trend: new Uint8Array(info.width),
         seasonal: new Int16Array(info.width),
         residual: new Array(info.width),
-        output: new Uint8Array(info.width),
+        output: new Array(info.width),
       }));
       this.dg = Array.from({ length: info.height }, () => ({
         observed: new Uint8Array(info.width),
         trend: new Uint8Array(info.width),
         seasonal: new Int16Array(info.width),
         residual: new Array(info.width),
-        output: new Uint8Array(info.width),
+        output: new Array(info.width),
       }));
       this.db = Array.from({ length: info.height }, () => ({
         observed: new Uint8Array(info.width),
         trend: new Uint8Array(info.width),
         seasonal: new Int16Array(info.width),
         residual: new Array(info.width),
-        output: new Uint8Array(info.width),
+        output: new Array(info.width),
       }));
 
       for (let y = 0; y < info.height; y++) {
@@ -137,19 +137,30 @@ export class M_Trend {
     const data = Buffer.alloc(this.info.width * this.info.height * 3);
 
     // combine the trend, seasonal, and residual into a single image
+    const combineArrays = (arr1: Int16Array, arr2: Uint8Array, arr3: number[]) => {
+      return arr3.map((value, index) => value + arr2[index] + arr1[index]);
+    };
+
+    for (let y = 0; y < height; y++) {
+      this.dr[y].output = combineArrays(this.dr[y].seasonal, this.dr[y].trend, this.dr[y].residual);
+      this.dg[y].output = combineArrays(this.dg[y].seasonal, this.dg[y].trend, this.dg[y].residual);
+      this.db[y].output = combineArrays(this.db[y].seasonal, this.db[y].trend, this.db[y].residual);
+    }
+
+    let index = 0;
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        const index = (y * width + x) * 3;
-        data[index] =
-          this.dr[y].seasonal[x] +
-          this.dr[y].trend[x] ;
-        data[index + 1] =
-          this.dg[y].seasonal[x] +
-          this.dg[y].trend[x] ;
-        data[index + 2] = this.db[y].seasonal[x]  + this.db[y].trend[x] ;
+        data[index] = this.dr[y].output[x];
+        index++;
+        data[index] = this.dg[y].output[x];
+        index++;
+        data[index] = this.db[y].output[x];
+        index++;
       }
     }
 
     return data;
   }
+
+
 }
