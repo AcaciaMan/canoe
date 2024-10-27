@@ -63,6 +63,7 @@ describe("M_Loess", () => {
           console.log(pngPath);
         const start = new Date().getTime();
           await mTrend.load_image(pngPath);
+          console.log(await mTrend.m_trend());
         const end = new Date().getTime();
         console.log(`Execution time: ${end - start} ms`);
             console.log("loaded image");

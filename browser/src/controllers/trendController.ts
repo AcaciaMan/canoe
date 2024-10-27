@@ -14,7 +14,7 @@ const getTrend = async (req: Request, res: Response) => {
   );
         let dataT = Buffer.from([]);
         await mTrend.load_image(pngPath)
-        dataT = mTrend.m_trend();
+        dataT = await mTrend.m_trend();
 
 
   // respond with binary data

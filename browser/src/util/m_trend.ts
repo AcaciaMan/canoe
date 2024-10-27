@@ -20,21 +20,21 @@ export class M_Trend {
     trend: Uint8Array;
     seasonal: Int16Array;
     residual: number[];
-    output: number[];
+    output: Uint8Array;
   }[] = [];
   dg: {
     observed: Uint8Array;
     trend: Uint8Array;
     seasonal: Int16Array;
     residual: number[];
-    output: number[];
+    output: Uint8Array;
   }[] = [];
   db: {
     observed: Uint8Array;
     trend: Uint8Array;
     seasonal: Int16Array;
     residual: number[];
-    output: number[];
+    output: Uint8Array;
   }[] = [];
   mPreCalcLoess: M_PreCalcLoess = M_PreCalcLoess.getInstance();
 
@@ -54,21 +54,21 @@ export class M_Trend {
         trend: new Uint8Array(info.width),
         seasonal: new Int16Array(info.width),
         residual: new Array(info.width),
-        output: new Array(info.width),
+        output: new Uint8Array(info.width),
       }));
       this.dg = Array.from({ length: info.height }, () => ({
         observed: new Uint8Array(info.width),
         trend: new Uint8Array(info.width),
         seasonal: new Int16Array(info.width),
         residual: new Array(info.width),
-        output: new Array(info.width),
+        output: new Uint8Array(info.width),
       }));
       this.db = Array.from({ length: info.height }, () => ({
         observed: new Uint8Array(info.width),
         trend: new Uint8Array(info.width),
         seasonal: new Int16Array(info.width),
         residual: new Array(info.width),
-        output: new Array(info.width),
+        output: new Uint8Array(info.width),
       }));
 
       for (let y = 0; y < info.height; y++) {
@@ -139,29 +139,47 @@ export class M_Trend {
     const data = Buffer.alloc(this.info.width * this.info.height * 3);
 
     // combine the trend, seasonal, and residual into a single image
-    const combineArrays = (arr1: Int16Array, arr2: Uint8Array, arr3: number[]) => {
-      return arr3.map((value, index) => value + arr2[index] + arr1[index]);
-    };
 
-    for (let y = 0; y < height; y++) {
-      this.dr[y].output = combineArrays(this.dr[y].seasonal, this.dr[y].trend, this.dr[y].residual);
-      this.dg[y].output = combineArrays(this.dg[y].seasonal, this.dg[y].trend, this.dg[y].residual);
-      this.db[y].output = combineArrays(this.db[y].seasonal, this.db[y].trend, this.db[y].residual);
-    }
+  const promises = [];
+  for (let y = 0; y < height; y++) {
+    promises.push(this.combineArrays(this.dr[y].seasonal, this.dr[y].trend, this.dr[y].residual).then(result => {
+      this.dr[y].output = result;
+    }));
+    promises.push(this.combineArrays(this.dg[y].seasonal, this.dg[y].trend, this.dg[y].residual).then(result => {
+      this.dg[y].output = result;
+    }));
+    promises.push(this.combineArrays(this.db[y].seasonal, this.db[y].trend, this.db[y].residual).then(result => {
+      this.db[y].output = result;
+    }));
+  }
 
+  return Promise.all(promises).then(() => {
     let index = 0;
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        data[index] = this.dr[y].output[x];
-        index++;
-        data[index] = this.dg[y].output[x];
-        index++;
-        data[index] = this.db[y].output[x];
-        index++;
+        data[index++] = this.dr[y].output[x];
+        data[index++] = this.dg[y].output[x];
+        data[index++] = this.db[y].output[x];
       }
     }
 
     return data;
+  });
+  }
+
+  async combineArrays(
+    arr1: Int16Array,
+    arr2: Uint8Array,
+    arr3: number[]
+  ) {
+    return new Promise<Uint8Array>((resolve, reject) => {
+ 
+        const result = new Uint8Array(arr1.length);
+        for (let i = 0; i < arr1.length; i++) {
+          result[i] = Math.min(255, Math.max(0, arr1[i] + arr2[i] + arr3[i]));
+        }
+        resolve(result);
+    });
   }
 
 
