@@ -1,11 +1,10 @@
 // return the rgb array
 
 import { Request, Response } from "express";
-import { M_PngToHsl } from "../util/m_png_to_hsl";
-import sharp from "sharp";
+
 import path from "path";
 import { M_Trend } from "../util/m_trend";
-
+      const mTrend: M_Trend = M_Trend.getInstance();
 const getTrend = async (req: Request, res: Response) => {
   const pngPath = path.join(
     __dirname,
@@ -13,14 +12,14 @@ const getTrend = async (req: Request, res: Response) => {
     "resources",
     "gates.png"
   );
-    const image = sharp(pngPath);
-    const { data, info } = await image
-      .raw()
-      .toBuffer({ resolveWithObject: true });
+  console.log(pngPath);
 
-      const mTrend: M_Trend = M_Trend.getInstance();
-        mTrend.load_image(pngPath);
-        const dataT = mTrend.data;
+        let dataT = Buffer.from([]);
+        console.log("loading image", dataT.length);
+        await mTrend.load_image(pngPath)
+        console.log("loaded image", dataT.length);
+        dataT = mTrend.m_trend();
+        console.log("loaded image", dataT.length);
 
 
   // respond with binary data

@@ -34,11 +34,12 @@ export class M_Trend {
   }[] = [];
 
   async load_image(pngPath: string) {
-    if (!this.data || !this.info) {
+    if (this.data === undefined|| this.info === undefined) {
       const image = sharp(pngPath);
-      const { data, info } = await image
+      const {data, info} = await image
         .raw()
         .toBuffer({ resolveWithObject: true });
+          console.log(info);
       this.data = data;
       this.info = info;
 
@@ -72,10 +73,11 @@ export class M_Trend {
       }
 
       // Create STL instance
-      const stl = new STL(50, 0.7);
+      const stl = new STL(2, 0.7);
+      console.log("decomposing", stl);
 
       // decompose each row into trend, seasonal, and residual
-      for (let y = 0; y < info.height; y++) {
+      for (let y = 0; y < 1; y++) {
         const { seasonal, trend, residual } = stl.decompose(
           this.dr[y].observed
         );
@@ -83,11 +85,12 @@ export class M_Trend {
         this.dr[y].trend = trend;
         this.dr[y].residual = residual;
       }
-    }
+
+  }
   }
 
   m_trend() {
-    if (!this.data || !this.info) {
+    if (this.data === undefined || this.info === undefined) {
       throw new Error("Image not loaded");
     }
 

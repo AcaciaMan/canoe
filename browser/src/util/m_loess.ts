@@ -7,16 +7,15 @@ export class Loess {
     this.bandwidth = bandwidth;
   }
 
-  smooth(x: Uint8Array, y: number[]): Int16Array {
+  smooth(x: number[], y: Uint8Array): Int16Array {
     const n = x.length;
     const smoothed = new Int16Array(n);
 
     for (let i = 0; i < n; i++) {
-    const weights = this.calculateWeights(x, x[i]);
-    const weightedY = y.map((yi, idx) => yi * weights[idx]);
-    const weightedX = [...x].map((xi, idx) => xi * weights[idx]);
-    const weightedX2 = [...x].map((xi, idx) => xi * xi * weights[idx]);
-
+      const weights = this.calculateWeights(x, x[i]);
+      const weightedY = [...y].map((yi, idx) => yi * weights[idx]);
+      const weightedX = [...x].map((xi, idx) => xi * weights[idx]);
+      const weightedX2 = [...x].map((xi, idx) => xi * xi * weights[idx]);
 
       const sumWeights = ss.sum(weights);
       const sumWeightedY = ss.sum(weightedY);
@@ -30,19 +29,25 @@ export class Loess {
         (sumWeightedY - meanY * sumWeights) /
         (sumWeightedX2 - meanX * sumWeightedX);
       const alpha = meanY - beta * meanX;
-    smoothed[i] = Math.floor(alpha + beta * x[i]);
+      smoothed[i] = Math.floor(alpha + beta * x[i]);
     }
 
     return smoothed;
   }
 
-  calculateWeights(x: Uint8Array, xi: number): number[] {
+  calculateWeights(x: number[], xi: number): number[] {
     const n = x.length;
     const weights = new Array(n);
+    const distances = x.map((x) => Math.abs(xi - x));
+    const maxDistance = Math.max(...distances);
 
     for (let i = 0; i < n; i++) {
-      const distance = Math.abs(x[i] - xi);
-      weights[i] = Math.max(0, 1 - Math.pow(distance / this.bandwidth, 3));
+      const distance = distances[i]/maxDistance;
+      if (distance <= this.bandwidth) {
+        weights[i] = Math.pow(1 - Math.pow(distance / this.bandwidth, 3), 3);
+      } else {
+        weights[i] = 0;
+      }
     }
 
     return weights;
