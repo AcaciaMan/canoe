@@ -12,14 +12,9 @@ const getTrend = async (req: Request, res: Response) => {
     "resources",
     "gates.png"
   );
-  console.log(pngPath);
-
         let dataT = Buffer.from([]);
-        console.log("loading image", dataT.length);
         await mTrend.load_image(pngPath)
-        console.log("loaded image", dataT.length);
         dataT = mTrend.m_trend();
-        console.log("loaded image", dataT.length);
 
 
   // respond with binary data

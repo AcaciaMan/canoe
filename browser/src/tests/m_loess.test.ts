@@ -11,28 +11,7 @@ describe("M_Loess", () => {
         loess = new Loess(0.7);
     });
     
-    test("calculateWeights should calculate the correct weights", () => {
-        const x = Array.from({ length: 60 }, (_, idx) => idx);
-        const xi = 30;
-        //const distances = [...x].map((x) => Math.abs(xi - x));
-        const distances =x.filter((x) => Math.abs(xi - x) <= 30);
-        console.log([...x]);
-        console.log(distances);
-        console.log(Math.max(...distances));
-
-        const distance = distances[0] / Math.max(...distances);
-        console.log(distance);
-
-
-
-        // benchmark:
-        const start = new Date().getTime();
-        const result = loess.calculateWeights(x, xi);
-        const end = new Date().getTime();
-        console.log(`Execution time: ${end - start} ms`);
-        console.log(result);
-    });
-    
+  
     test("smooth should calculate the correct smoothed values", () => {
         const x = [1, 2, 3, 4, 5];
         const y = new Uint8Array([10, 20, 30, 40, 50]);

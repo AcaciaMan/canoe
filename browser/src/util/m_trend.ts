@@ -19,18 +19,21 @@ export class M_Trend {
     trend: Uint8Array;
     seasonal: Int16Array;
     residual: number[];
+    output: Uint8Array;
   }[] = [];
   dg: {
     observed: Uint8Array;
     trend: Uint8Array;
     seasonal: Int16Array;
     residual: number[];
+    output: Uint8Array;
   }[] = [];
   db: {
     observed: Uint8Array;
     trend: Uint8Array;
     seasonal: Int16Array;
     residual: number[];
+    output: Uint8Array;
   }[] = [];
 
   async load_image(pngPath: string) {
@@ -49,18 +52,21 @@ export class M_Trend {
         trend: new Uint8Array(info.width),
         seasonal: new Int16Array(info.width),
         residual: new Array(info.width),
+        output: new Uint8Array(info.width),
       }));
       this.dg = Array.from({ length: info.height }, () => ({
         observed: new Uint8Array(info.width),
         trend: new Uint8Array(info.width),
         seasonal: new Int16Array(info.width),
         residual: new Array(info.width),
+        output: new Uint8Array(info.width),
       }));
       this.db = Array.from({ length: info.height }, () => ({
         observed: new Uint8Array(info.width),
         trend: new Uint8Array(info.width),
         seasonal: new Int16Array(info.width),
         residual: new Array(info.width),
+        output: new Uint8Array(info.width),
       }));
 
       for (let y = 0; y < info.height; y++) {
@@ -78,6 +84,7 @@ export class M_Trend {
 
 
       // decompose each row into trend, seasonal, and residual
+      /*
       const start = new Date().getTime();
       let observed = this.dr[0].observed;
         const { seasonal, trend, residual } = stl.decompose(
@@ -88,19 +95,33 @@ export class M_Trend {
         console.log(seasonal);
         console.log(trend);
         console.log(residual);
+      */
 
-
-      /*
       
-      for (let y = 0; y < 1; y++) {
-        const { seasonal, trend, residual } = stl.decompose(
+      
+      for (let y = 0; y < info.height; y++) {
+        let { seasonal, trend, residual } = stl.decompose(
           this.dr[y].observed
         );
         this.dr[y].seasonal = seasonal;
         this.dr[y].trend = trend;
         this.dr[y].residual = residual;
+
+        ({ seasonal, trend, residual } = stl.decompose(
+          this.dg[y].observed
+        ));
+        this.dg[y].seasonal = seasonal;
+        this.dg[y].trend = trend;
+        this.dg[y].residual = residual;
+
+        ({ seasonal, trend, residual } = stl.decompose(
+          this.db[y].observed
+        ));
+        this.db[y].seasonal = seasonal;
+        this.db[y].trend = trend;
+        this.db[y].residual = residual;
       }
-      */
+      
   }
   }
 
@@ -119,9 +140,13 @@ export class M_Trend {
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         const index = (y * width + x) * 3;
-        data[index] = this.dr[y].trend[x];
-        data[index + 1] = this.dg[y].trend[x];
-        data[index + 2] = this.db[y].trend[x];
+        data[index] =
+          this.dr[y].seasonal[x] +
+          this.dr[y].trend[x] ;
+        data[index + 1] =
+          this.dg[y].seasonal[x] +
+          this.dg[y].trend[x] ;
+        data[index + 2] = this.db[y].seasonal[x]  + this.db[y].trend[x] ;
       }
     }
 
