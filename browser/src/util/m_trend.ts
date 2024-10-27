@@ -40,6 +40,7 @@ export class M_Trend {
     output: Uint8Array;
   }[] = [];
   mPreCalcLoess: M_PreCalcLoess = M_PreCalcLoess.getInstance();
+  mRandomNumbers: Uint8Array = new Uint8Array(10000).fill(0).map(() => Math.floor(Math.random() * 4));
 
   async load_image(pngPath: string) {
     if (this.data === undefined || this.info === undefined) {
@@ -152,7 +153,8 @@ export class M_Trend {
           this.dr[y].seasonal,
           this.dr[y].trend,
           this.dr[y].residual,
-          this.dr[y].mSign
+          this.dr[y].mSign,
+          Math.floor(Math.random() * 100)
         ).then((result) => {
           this.dr[y].output = result;
         })
@@ -162,7 +164,8 @@ export class M_Trend {
           this.dg[y].seasonal,
           this.dg[y].trend,
           this.dg[y].residual,
-          this.dg[y].mSign
+          this.dg[y].mSign,
+          Math.floor(Math.random() * 100)
         ).then((result) => {
           this.dg[y].output = result;
         })
@@ -172,7 +175,8 @@ export class M_Trend {
           this.db[y].seasonal,
           this.db[y].trend,
           this.db[y].residual,
-          this.db[y].mSign
+          this.db[y].mSign,
+          Math.floor(Math.random() * 100)
         ).then((result) => {
           this.db[y].output = result;
         })
@@ -197,16 +201,26 @@ export class M_Trend {
     return Math.floor(Math.random() * 4);
   }
 
-  async combineArrays(arr1: Int16Array, arr2: Uint8Array, arr3: Uint8Array, arr4: Uint8Array) {
+  async combineArrays(arr1: Int16Array, arr2: Uint8Array, arr3: Uint8Array, arr4: Uint8Array, rnd: number) {
     return new Promise<Uint8Array>((resolve, reject) => {
       const result = new Uint8Array(arr1.length);
+
       for (let i = 0; i < arr1.length; i++) {
         if (arr4[i] === 1) {
-          result[i] = Math.min(255, Math.max(0, arr1[i] + arr2[i] - arr3[i] >> this.getRandomInt()));
+          result[i] = Math.min(255, Math.max(0, arr1[i] + arr2[i] - (arr3[i] >> this.mRandomNumbers[i+rnd])));
         } else {
-        result[i] = Math.min(255, Math.max(0, arr1[i] + arr2[i] + arr3[i] >> this.getRandomInt()));
+        result[i] = Math.min(
+          255,
+          Math.max(
+            0,
+            (arr1[i] + arr2[i] + (arr3[i] >> this.mRandomNumbers[i+rnd]))
+          )
+        );
       }
+
+
     }
+
       resolve(result);
     });
   }
