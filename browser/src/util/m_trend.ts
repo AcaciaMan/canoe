@@ -1,13 +1,13 @@
 import sharp from "sharp";
 import { STL } from "./m_stl";
 import { M_PreCalcLoess } from "./m_pre_calc_loess";
-import { randomBytes } from "crypto";
-import e from "express";
+
+
 
 export class M_Trend {
   // singleton
   private static instance: M_Trend;
-  private constructor() {}
+  public constructor() {}
   static getInstance() {
     if (!M_Trend.instance) {
       M_Trend.instance = new M_Trend();
