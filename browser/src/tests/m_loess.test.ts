@@ -2,6 +2,7 @@ import path from "path";
 import { Loess } from "../util/m_loess";
 import { STL } from "../util/m_stl";
 import { M_Trend } from "../util/m_trend";
+import { M_PreCalcLoess } from "../util/m_pre_calc_loess";
 
 describe("M_Loess", () => {
     let loess: Loess;
@@ -44,6 +45,20 @@ describe("M_Loess", () => {
         const a = new Uint8Array([4, 5, 6]);
         const b = [...a].map((_,idx) => idx);
         console.log(b);
+    });
+
+    test("loess", () => {
+        const x = Array.from({ length: 1337 }, (_, idx) => idx);
+        const y = new Uint8Array(1337).map(() => Math.floor(Math.random() * 256));
+        const mPre = M_PreCalcLoess.getInstance();
+        console.log(mPre.getWeights());
+        console.log(mPre.getSumWeights());
+
+        const start = new Date().getTime();
+        const result = loess.smooth(x, y);
+        const end = new Date().getTime();
+        console.log(`Execution time: ${end - start} ms`);
+        console.log(result);
     });
 
     test("stl", () => {
