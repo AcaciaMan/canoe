@@ -4,7 +4,7 @@ export class STL {
   private loess: Loess;
   private period: number;
   private seasonal: Int16Array = new Int16Array(0);
-  private trend: Uint8Array = new Uint8Array(0);
+  private trend: Int16Array = new Int16Array(0);
   private residual: Uint8Array = new Uint8Array(0);
   private mSign: Uint8Array = new Uint8Array(0);
 
@@ -15,36 +15,30 @@ export class STL {
 
   decompose(data: Uint8Array): {
     seasonal: Int16Array;
-    trend: Uint8Array;
+    trend: Int16Array;
     residual: Uint8Array;
     mSign: Uint8Array;
   } {
     const n = data.length;
     this.seasonal = new Int16Array(n);
-    this.trend = new Uint8Array(n);
+    this.trend = new Int16Array(n);
     this.residual = new Uint8Array(n);
     this.mSign = new Uint8Array(n);
 
     // Initial seasonal component estimation
     for (let i = 0; i < this.period; i++) {
       const seasonalData = data.filter((_, idx) => idx % this.period === i);
-      const smoothed = this.loess.smooth(
-        seasonalData
-      );
+      const smoothed = this.loess.smooth(seasonalData);
       for (let j = 0; j < smoothed.length; j++) {
         this.seasonal[i + j * this.period] = smoothed[j];
       }
     }
 
-      // Detrend data
-      const detrended = this.seasonal.map((d,i) => -d + data[i]);
+    // Detrend data
+    const detrended = this.seasonal.map((d, i) => -d + data[i]);
 
-      // Estimate trend component
-      const smoothTrend = this.loess.smooth16(
-         detrended
-      );
-
-      smoothTrend.forEach((d, i) => (this.trend[i] = Math.max(0,Math.min(255,d))));
+    // Estimate trend component
+    const smoothTrend = this.loess.smooth16(detrended);
 
     // Calculate residual component
     for (let i = 0; i < n; i++) {

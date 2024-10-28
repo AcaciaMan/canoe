@@ -19,7 +19,7 @@ export class M_Trend {
   info: sharp.OutputInfo | undefined;
   dr: {
     observed: Uint8Array;
-    trend: Uint8Array;
+    trend: Int16Array;
     seasonal: Int16Array;
     residual: Uint8Array;
     mSign: Uint8Array;
@@ -27,7 +27,7 @@ export class M_Trend {
   }[] = [];
   dg: {
     observed: Uint8Array;
-    trend: Uint8Array;
+    trend: Int16Array;
     seasonal: Int16Array;
     residual: Uint8Array;
     mSign: Uint8Array;
@@ -35,14 +35,16 @@ export class M_Trend {
   }[] = [];
   db: {
     observed: Uint8Array;
-    trend: Uint8Array;
+    trend: Int16Array;
     seasonal: Int16Array;
     residual: Uint8Array;
     mSign: Uint8Array;
     output: Uint8Array;
   }[] = [];
   mPreCalcLoess: M_PreCalcLoess = M_PreCalcLoess.getInstance();
-  mRandomNumbers: Uint8Array = new Uint8Array(10000).fill(0).map(() => Math.floor(Math.random() * 4));
+  mRandomNumbers: Uint8Array = new Uint8Array(10000)
+    .fill(0)
+    .map(() => Math.floor(Math.random() * 4));
 
   async load_image(pngPath: string) {
     if (this.data === undefined || this.info === undefined) {
@@ -57,7 +59,7 @@ export class M_Trend {
       // initialize the observed, trend, seasonal, and residual arrays
       this.dr = Array.from({ length: info.height }, () => ({
         observed: new Uint8Array(info.width),
-        trend: new Uint8Array(info.width),
+        trend: new Int16Array(info.width),
         seasonal: new Int16Array(info.width),
         residual: new Uint8Array(info.width),
         mSign: new Uint8Array(info.width),
@@ -65,7 +67,7 @@ export class M_Trend {
       }));
       this.dg = Array.from({ length: info.height }, () => ({
         observed: new Uint8Array(info.width),
-        trend: new Uint8Array(info.width),
+        trend: new Int16Array(info.width),
         seasonal: new Int16Array(info.width),
         residual: new Uint8Array(info.width),
         mSign: new Uint8Array(info.width),
@@ -73,7 +75,7 @@ export class M_Trend {
       }));
       this.db = Array.from({ length: info.height }, () => ({
         observed: new Uint8Array(info.width),
-        trend: new Uint8Array(info.width),
+        trend: new Int16Array(info.width),
         seasonal: new Int16Array(info.width),
         residual: new Uint8Array(info.width),
         mSign: new Uint8Array(info.width),
@@ -196,35 +198,33 @@ export class M_Trend {
     });
   }
 
-
-
-  async combineArrays(arr1: Int16Array, arr2: Uint8Array, arr3: Uint8Array, arr4: Uint8Array, result: Uint8Array, y: number) {
+  async combineArrays(
+    arr1: Int16Array,
+    arr2: Int16Array,
+    arr3: Uint8Array,
+    arr4: Uint8Array,
+    result: Uint8Array,
+    y: number
+  ) {
     return new Promise<void>((resolve, reject) => {
-
-      const randomByte = new Uint8Array(1).fill(0).map(() => Math.floor(Math.random() * 100));
+      const randomByte = new Uint8Array(1)
+        .fill(0)
+        .map(() => Math.floor(Math.random() * 100));
 
       for (let i = 0; i < arr1.length; i++) {
         const mSum = this.mRandomNumbers[randomByte[0] + i];
         if (arr4[i] === 1) {
           result[i] = Math.min(
             255,
-            Math.max(
-              0,
-              arr1[i] + arr2[i] - (arr3[i] >> mSum)
-            )
+            Math.max(0, arr1[i] + arr2[i] - (arr3[i] >> mSum))
           );
         } else {
-        result[i] = Math.min(
-          255,
-          Math.max(
-            0,
-            arr1[i] + arr2[i] + (arr3[i] >> mSum)
-          )
-        );
+          result[i] = Math.min(
+            255,
+            Math.max(0, arr1[i] + arr2[i] + (arr3[i] >> mSum))
+          );
+        }
       }
-
-
-    }
 
       resolve();
     });
