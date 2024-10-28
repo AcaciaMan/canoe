@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import path from "path";
 import { M_Trend } from "../util/m_trend";
 import { M_TrendWide } from "../util/m_trend_wide";
+import { M_TrendInc } from "../util/m_trend_inc";
       let mTrend: M_Trend = M_Trend.getInstance();
 const getTrend = async (req: Request, res: Response) => {
 
@@ -12,7 +13,11 @@ const getTrend = async (req: Request, res: Response) => {
     mTrend = M_Trend.getInstance();
   } else if (req.query.class === "wide") {
     mTrend = M_TrendWide.getInstance();
+  } else if (req.query.class === "incremental") {
+    mTrend = M_TrendInc.getInstance();
   }
+
+
   const pngPath = path.join(
     __dirname,
     "../../public",

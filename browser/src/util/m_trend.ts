@@ -156,7 +156,8 @@ export class M_Trend {
           this.dr[y].trend,
           this.dr[y].residual,
           this.dr[y].mSign,
-          this.dr[y].output
+          this.dr[y].output,
+          y
         ).then(() => {})
       );
       promises.push(
@@ -165,7 +166,8 @@ export class M_Trend {
           this.dg[y].trend,
           this.dg[y].residual,
           this.dg[y].mSign,
-          this.dg[y].output
+          this.dg[y].output,
+          y
         ).then(() => {})
       );
       promises.push(
@@ -174,7 +176,8 @@ export class M_Trend {
           this.db[y].trend,
           this.db[y].residual,
           this.db[y].mSign,
-          this.db[y].output
+          this.db[y].output,
+          y
         ).then(() => {})
       );
     }
@@ -195,7 +198,7 @@ export class M_Trend {
 
 
 
-  async combineArrays(arr1: Int16Array, arr2: Uint8Array, arr3: Uint8Array, arr4: Uint8Array, result: Uint8Array) {
+  async combineArrays(arr1: Int16Array, arr2: Uint8Array, arr3: Uint8Array, arr4: Uint8Array, result: Uint8Array, y: number) {
     return new Promise<void>((resolve, reject) => {
 
       const randomByte = new Uint8Array(1).fill(0).map(() => Math.floor(Math.random() * 100));

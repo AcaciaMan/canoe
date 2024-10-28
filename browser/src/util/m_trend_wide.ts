@@ -15,7 +15,7 @@ export class M_TrendWide extends M_Trend {
   }
 
 
-  async combineArrays(arr1: Int16Array, arr2: Uint8Array, arr3: Uint8Array, arr4: Uint8Array, result: Uint8Array): Promise<void> {
+  async combineArrays(arr1: Int16Array, arr2: Uint8Array, arr3: Uint8Array, arr4: Uint8Array, result: Uint8Array, y: number): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         let k = 0;
       for (let i = 0; i < arr1.length/2; i++) {

@@ -33,7 +33,7 @@
                 console.log('Fetching image...');
 
                 try {
-                fetch('/api/trend_image?class=wide', {
+                fetch('/api/trend_image?class=incremental', {
                     method: 'GET'
                 })
                 .then(response => response.arrayBuffer())
