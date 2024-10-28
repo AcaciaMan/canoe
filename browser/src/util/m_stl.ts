@@ -38,12 +38,10 @@ export class STL {
 
       // Detrend data
       const detrended = this.seasonal.map((d,i) => -d + data[i]);
-      const detrendedUint8 = new Uint8Array(n);
-      detrended.forEach((d, i) => (detrendedUint8[i] = Math.max(0,Math.min(255,d))));
 
       // Estimate trend component
-      const smoothTrend = this.loess.smooth(
-         detrendedUint8
+      const smoothTrend = this.loess.smooth16(
+         detrended
       );
 
       smoothTrend.forEach((d, i) => (this.trend[i] = Math.max(0,Math.min(255,d))));

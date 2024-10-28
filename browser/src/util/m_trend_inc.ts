@@ -18,14 +18,14 @@ export class M_TrendInc extends M_Trend {
             let k = 0;
             for (let i = 0; i < arr1.length; i++) {
                 if (arr4[i] === 1) {
-                    result[k] = arr1[i] + arr2[i] - arr3[i];
+                    result[k] = arr1[i] + arr2[i] ; // - arr3[i];
                     k++;
                     if (this.addPixel(y, i)) {
                         result[k] = result[k - 1] ;
                         k++;
                     }
                 } else {
-                    result[k] = arr1[i] + arr2[i] + arr3[i];
+                    result[k] = arr1[i] + arr2[i]; // + arr3[i];
                     k++;
                     if (this.addPixel(y, i)) {
                         result[k] = result[k - 1] ;
