@@ -5,23 +5,12 @@
 #include <algorithm>
 #include "json.hpp" // Include the nlohmann/json header
 #include <chrono>
+#include "common.hpp"
 
 using json = nlohmann::json;
 
-struct Coordinate {
-    double latitude;
-    double longitude;
-};
-
-struct Feature {
-    std::string name;
-    std::vector<Coordinate> coordinates;
-    double perimeter;
-    double area;
-    double width;
-};
-
 const double EARTH_RADIUS = 6371.0; // Earth radius in kilometers
+const double EARTH_RADIUS_M = 6371009;
 
 double toRadians(double degree) {
     return degree * M_PI / 180.0;
@@ -94,6 +83,98 @@ std::vector<Feature> loadFeaturesFromJson(const std::string& filename) {
     return features;
 }
 
+double calculateArea(const std::vector<Coordinate>& coordinates) {
+    double area = 0.0;
+    size_t n = coordinates.size();
+    for (size_t i = 0; i < n; ++i) {
+        double lat1 = toRadians(coordinates[i].latitude);
+        double lon1 = toRadians(coordinates[i].longitude);
+        double lat2 = toRadians(coordinates[(i + 1) % n].latitude);
+        double lon2 = toRadians(coordinates[(i + 1) % n].longitude);
+
+        area += (lon2 - lon1) * (2 + sin(lat1) + sin(lat2));
+    }
+    area = fabs(area) * EARTH_RADIUS * EARTH_RADIUS / 2.0;
+    return area;
+}
+
+double PolarTriangleArea(double tan1, double lng1, double tan2, double lng2)
+{
+    double deltaLng = lng1 - lng2;
+    double t = tan1 * tan2;
+    return 2 * atan2(t * sin(deltaLng), 1 + t * cos(deltaLng));
+}
+
+double ComputeSignedAreaRad(std::vector<Coordinate> path, double radius)
+{
+    int size = path.size();
+    if (size < 3) { return 0; }
+    double total = 0;
+    Coordinate prev = path[size - 1];
+    double prevTanLat = tan((M_PI / 2 - toRadians(prev.latitude)) / 2);
+    double prevLng = toRadians(prev.longitude);
+
+    for (const Coordinate& point : path)
+    {
+        double tanLat = tan((M_PI / 2 - toRadians(point.latitude)) / 2);
+        double lng = toRadians(point.longitude);
+        total += PolarTriangleArea(tanLat, lng, prevTanLat, prevLng);
+        prevTanLat = tanLat;
+        prevLng = lng;
+    }
+    return total * (radius * radius);
+}
+
+double ComputeSignedArea(std::vector<Coordinate> path)
+{
+    return ComputeSignedAreaRad(path, EARTH_RADIUS_M);
+}
+
+void findMinMaxLatLon(const std::vector<Coordinate>& coordinates, double& minLat, double& maxLat, double& minLon, double& maxLon,
+    double& minLatLon, double& maxLatLon, double& minLonLat, double& maxLonLat  ) {
+    if (coordinates.empty()) {
+        return;
+    }
+
+    minLat = maxLat = minLonLat = maxLonLat = coordinates[0].latitude;
+    minLon = maxLon = minLatLon = maxLatLon = coordinates[0].longitude;
+
+    for (const auto& coord : coordinates) {
+        if (coord.latitude < minLat) {
+            minLat = coord.latitude;
+            minLatLon = coord.longitude;
+        }
+        if (coord.latitude > maxLat) {
+            maxLat = coord.latitude;
+            maxLatLon = coord.longitude;
+        }
+        if (coord.longitude < minLon) {
+            minLon = coord.longitude;
+            minLonLat = coord.latitude;
+        }
+        if (coord.longitude > maxLon) {
+            maxLon = coord.longitude;
+            maxLonLat = coord.latitude;
+        }
+    }
+}
+
+double calculateTriangleArea(double a, double b, double c) {
+    double s = (a + b + c) / 2;
+    return sqrt(s * (s - a) * (s - b) * (s - c));
+}
+
+double calculateSignedArea(const std::vector<Coordinate>& coordinates) {
+    double area = 0.0;
+    size_t n = coordinates.size();
+    for (size_t i = 0; i < n; ++i) {
+        const Coordinate& coord1 = coordinates[i];
+        const Coordinate& coord2 = coordinates[(i + 1) % n];
+        area += (coord2.longitude - coord1.longitude) * (coord2.latitude + coord1.latitude);
+    }
+    return area / 2.0;
+}
+
 void calculatePerimetersAndAreas(std::vector<Feature>& features) {
     for (auto& feature : features) {
         double perimeter = 0.0;
@@ -105,11 +186,14 @@ void calculatePerimetersAndAreas(std::vector<Feature>& features) {
             const Coordinate& coord2 = feature.coordinates[(i + 1) % feature.coordinates.size()];
             perimeter += haversineDistance(coord1, coord2);
 
+/*
             if (i < feature.coordinates.size() - 2) {
                 const Coordinate& coord3 = feature.coordinates[(i + 2) % feature.coordinates.size()];
                 area += calculateSphericalExcess(coord1, coord2, coord3);
             }
+*/            
         }
+
 
                 // Calculate the width (maximum distance between any two points)
         for (size_t i = 0; i < feature.coordinates.size(); ++i) {
@@ -121,9 +205,32 @@ void calculatePerimetersAndAreas(std::vector<Feature>& features) {
             }
         }
 
-        feature.perimeter = perimeter;
-        feature.area = fabs(area) * EARTH_RADIUS * EARTH_RADIUS;
         feature.width = width;
+
+        feature.perimeter = perimeter;
+
+        // get feature width and length
+        findMinMaxLatLon(feature.coordinates, feature.minLat, feature.maxLat, feature.minLon, feature.maxLon, 
+           feature.minLatLon, feature.maxLatLon, feature.minLonLat, feature.maxLonLat);
+
+        const Coordinate& midPoint = { (feature.minLat + feature.maxLat) / 2, (feature.minLon + feature.maxLon) / 2 };
+
+        area = 0.0;
+        for (size_t i = 0; i < feature.coordinates.size(); ++i) {
+            const Coordinate& coord1 = feature.coordinates[i];
+            const Coordinate& coord2 = feature.coordinates[(i + 1) % feature.coordinates.size()];
+
+            // add the area of the triangle formed by the midpoint and the two coordinates only if coordinates form counter clockwise triangle
+            if (calculateSignedArea({coord1, coord2, midPoint}) > 0) {
+                area += calculateTriangleArea(haversineDistance(coord1, midPoint), haversineDistance(coord2, midPoint), haversineDistance(coord1, coord2));
+            } else {
+                area -= calculateTriangleArea(haversineDistance(coord1, midPoint), haversineDistance(coord2, midPoint), haversineDistance(coord1, coord2));
+            }
+        }
+
+        feature.area = area;
+
+
     }
 }
 
