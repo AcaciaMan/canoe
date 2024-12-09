@@ -109,6 +109,24 @@ std::vector<Feature> loadFeaturesFromJson(const std::string& filename) {
                     c.latitude = ring[1].get<double>();
                     f.coordinates.push_back(c);
 
+                } else {
+                    for (const auto& coord : ring) {
+                        if (coord.is_array() && coord.size() == 2) {
+                            Coordinate c;
+                            c.longitude = coord[0].get<double>();
+                            c.latitude = coord[1].get<double>();
+                            f.coordinates.push_back(c);
+                        } else {
+                            for (const auto& point : coord) {
+                                if (point.is_array() && point.size() == 2) {
+                                    Coordinate c;
+                                    c.longitude = point[0].get<double>();
+                                    c.latitude = point[1].get<double>();
+                                    f.coordinates.push_back(c);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

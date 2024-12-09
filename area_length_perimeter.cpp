@@ -73,6 +73,24 @@ std::vector<Feature> loadFeaturesFromJson(const std::string& filename) {
                     c.latitude = ring[1].get<double>();
                     f.coordinates.push_back(c);
 
+                } else {
+                    for (const auto& coord : ring) {
+                        if (coord.is_array() && coord.size() == 2) {
+                            Coordinate c;
+                            c.longitude = coord[0].get<double>();
+                            c.latitude = coord[1].get<double>();
+                            f.coordinates.push_back(c);
+                        } else {
+                            for (const auto& point : coord) {
+                                if (point.is_array() && point.size() == 2) {
+                                    Coordinate c;
+                                    c.longitude = point[0].get<double>();
+                                    c.latitude = point[1].get<double>();
+                                    f.coordinates.push_back(c);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -160,6 +178,9 @@ void findMinMaxLatLon(const std::vector<Coordinate>& coordinates, double& minLat
 }
 
 double calculateTriangleArea(double a, double b, double c) {
+    if(a + b <= c || a + c <= b || b + c <= a) {
+        return 0.0;
+    }
     double s = (a + b + c) / 2;
     return sqrt(s * (s - a) * (s - b) * (s - c));
 }
@@ -226,9 +247,22 @@ void calculatePerimetersAndAreas(std::vector<Feature>& features) {
             } else {
                 area -= calculateTriangleArea(haversineDistance(coord1, midPoint), haversineDistance(coord2, midPoint), haversineDistance(coord1, coord2));
             }
+
+            if (std::isnan(area)) {
+                std::cout << "i " << i << std::endl;
+               std::cout << "nan area " << feature.name << std::endl;
+               std::cout << "coord1 " << coord1.latitude << " " << coord1.longitude << std::endl;
+                std::cout << "coord2 " << coord2.latitude << " " << coord2.longitude << std::endl;
+                break;
         }
 
-        feature.area = area;
+        }
+
+        if (std::isnan(area)) {
+            feature.area = 0.0;
+        } else {
+            feature.area = area;
+        }
 
 
     }
